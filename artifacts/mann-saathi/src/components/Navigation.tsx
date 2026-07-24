@@ -45,7 +45,7 @@ export function Navigation() {
   return (
     <>
       {/* Fixed Upper-Middle Floating Header Bar */}
-      <nav className="fixed top-4 inset-x-0 mx-auto w-[92%] max-w-4xl z-50 rounded-full glass-pill p-2 px-4 sm:px-6 flex items-center justify-between shadow-2xl transition-all">
+      <nav className="fixed top-4 inset-x-0 mx-auto w-[92%] max-w-4xl z-[9999] rounded-full glass-pill p-2 px-4 sm:px-6 flex items-center justify-between shadow-2xl transition-all">
         
         {/* Highlighted Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
