@@ -43,7 +43,7 @@ export default function Landing() {
       <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.05] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] mix-blend-overlay" />
 
       {/* Hero Section with Living Animated Aurora Background */}
-      <section className="relative min-h-[92vh] flex flex-col justify-between pt-28 pb-12 px-4 sm:px-8 lg:px-12 overflow-hidden border-b border-white/10">
+      <section className="relative min-h-[92vh] flex flex-col justify-between pt-36 sm:pt-40 pb-12 px-4 sm:px-8 lg:px-12 overflow-hidden border-b border-white/10">
         
         {/* Living Animated WebGL LightRays & CSS Aurora Blades */}
         <LightRays

@@ -55,7 +55,7 @@ export default function Blueprint() {
   const strokeOffset = 100 - (journeyStep / totalSteps) * 100;
 
   return (
-    <div className="min-h-screen text-white selection:bg-[#ff6b4a]/30 selection:text-amber-200 overflow-x-hidden relative font-sans pt-24 pb-20">
+    <div className="min-h-screen text-white selection:bg-[#ff6b4a]/30 selection:text-amber-200 overflow-x-hidden relative font-sans pt-36 sm:pt-40 pb-20">
       
       {/* Living Animated WebGL LightRays & CSS Aurora Blades */}
       <LightRays

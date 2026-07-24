@@ -66,7 +66,7 @@ export default function Demo() {
   const visibleMessages = currentPersona.messages.slice(0, currentStep + 1);
 
   return (
-    <div className="min-h-screen text-white overflow-x-hidden relative font-sans pt-24 pb-20">
+    <div className="min-h-screen text-white overflow-x-hidden relative font-sans pt-36 sm:pt-40 pb-20">
       {/* Living WebGL Aurora Background */}
       <LightRays
         raysOrigin="top-center"
