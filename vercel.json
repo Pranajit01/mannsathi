@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "buildCommand": "pnpm --filter @workspace/mann-saathi run build",
+  "buildCommand": "npm run build --prefix artifacts/mann-saathi",
   "outputDirectory": "artifacts/mann-saathi/dist",
   "rewrites": [
     {

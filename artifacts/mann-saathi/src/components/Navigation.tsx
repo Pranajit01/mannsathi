@@ -7,7 +7,6 @@ import {
   Sparkles, 
   PhoneCall, 
   Bug, 
-  Presentation, 
   Cpu, 
   Github, 
   Linkedin, 
@@ -238,26 +237,6 @@ export function Navigation() {
                   </div>
                   <ArrowRight className="w-4 h-4 text-neutral-500 group-hover:text-neutral-300 group-hover:translate-x-1 transition-all" />
                 </button>
-
-                {/* 4. Investor Pitch */}
-                <Link
-                  href="/pitch"
-                  onClick={() => setDrawerOpen(false)}
-                  className="flex items-center justify-between p-3.5 rounded-2xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/10 text-white transition-all group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#ff6b4a]/10 border border-[#ff6b4a]/20 text-[#ff6b4a] flex items-center justify-center group-hover:scale-105 transition-transform">
-                      <Presentation className="w-4 h-4 text-[#ff6b4a]" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-sm text-white group-hover:text-[#ff6b4a] transition-colors">
-                        Investor Deck
-                      </div>
-                      <div className="text-xs text-neutral-400">Executive deck & strategy</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-neutral-500 group-hover:text-neutral-300 group-hover:translate-x-1 transition-all" />
-                </Link>
               </div>
             </div>
 

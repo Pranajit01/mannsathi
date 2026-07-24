@@ -10,7 +10,6 @@ import Blueprint from '@/pages/blueprint';
 import Demo from '@/pages/demo';
 import Architecture from '@/pages/architecture';
 import Personas from '@/pages/personas';
-import Pitch from '@/pages/pitch';
 import Roadmap from '@/pages/roadmap';
 import NotFound from '@/pages/not-found';
 
@@ -26,7 +25,6 @@ function Router() {
         <Route path="/demo" component={Demo} />
         <Route path="/architecture" component={Architecture} />
         <Route path="/personas" component={Personas} />
-        <Route path="/pitch" component={Pitch} />
         <Route path="/roadmap" component={Roadmap} />
         <Route component={NotFound} />
       </Switch>

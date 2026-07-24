@@ -380,9 +380,6 @@ export default function Blueprint() {
                   <span>Try AI Companion Demo</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
-                <Link href="/pitch" className="btn-keycap bg-white/10 text-white text-xs hover:bg-white/20">
-                  <span>View Investor Pitch Deck</span>
-                </Link>
               </div>
             </div>
           )}
