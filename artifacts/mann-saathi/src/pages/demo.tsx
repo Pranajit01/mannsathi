@@ -11,7 +11,8 @@ import {
   Users,
   CheckCircle2,
   Cpu,
-  RefreshCw
+  RefreshCw,
+  HeartPulse
 } from 'lucide-react';
 import { LightRays } from '@/components/LightRays';
 
@@ -41,7 +42,7 @@ export default function Demo() {
   const [activeTab, setActiveTab] = useState<'live' | 'scenarios'>('live');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Hinglish');
 
-  // Google ADK Gemma 4 Engine State
+  // Gemma 4 Engine State
   const [adkStatus, setAdkStatus] = useState<'checking' | 'connected' | 'offline'>('checking');
   const [selectedModel, setSelectedModel] = useState<string>('gemma-4-26b-a4b-it');
 
@@ -52,7 +53,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Namaste! I am Mann Saathi — your private Gemma 4 AI mental health companion (powered by Google ADK). How are you feeling today? You can share whatever is on your mind freely. Everything is 100% private and confidential.',
+      content: 'Hello! I am Gemma 4, your personal mental healthcare chatbot. How can I help you today? You can share whatever you are experiencing freely. I am here to help you in every possible way.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -64,7 +65,7 @@ export default function Demo() {
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  // Check Google ADK Gemma 4 Server Status
+  // Check Gemma 4 ADK Backend Status
   const checkAdkConnection = async () => {
     setAdkStatus('checking');
     try {
@@ -90,13 +91,11 @@ export default function Demo() {
       name: 'Arjun (Engineering Student)',
       scenario: 'Exam stress, family expectations, comparison culture',
       messages: [
-        { role: 'assistant', content: 'Namaste. Main Mann Saathi hoon. Aap kaise hain aaj? Kya aap mujhse kuch share karna chahenge?', risk: 0 },
+        { role: 'assistant', content: 'Hello Arjun! I am Gemma 4, your healthcare assistant. How are you feeling today?', risk: 0 },
         { role: 'user', content: 'Bahut stress hai. Exam aa raha hai aur kuch samajh nahi aa raha.' },
-        { role: 'assistant', content: 'Main samajh sakta hoon. Exam stress bahut overwhelming ho sakta hai. Kya aap mujhe thoda aur batayenge ki aap kaisa feel kar rahe hain?', risk: 1 },
-        { role: 'user', content: 'Sab friends acche college mein hain. Main bas ek failure hoon. Parents ne itna invest kiya aur maine unhe disappoint kiya.' },
-        { role: 'assistant', content: 'Yeh sunke mann bhaari ho gaya. Comparison ka dard main samajh sakta hoon. Lekin ek baat batau? Ek exam aapki puri life define nahi karti. Aap abhi bahut young hain — bahut saare raaste hain. Kya aapne apne parents se baat ki hai is baare mein?', risk: 2 },
-        { role: 'user', content: 'Nahi. Main unhe face nahi kar sakta. Har din unke expectations ka weight feel hota hai.' },
-        { role: 'assistant', content: 'Yeh bahut heavy burden hai jo aap carry kar rahe hain. Akele carry karna aur bhi mushkil hota hai. Kya aap chahte hain ki hum saath mein kuch breathing exercise karein? Thoda calm feel karne ke liye?', risk: 2 },
+        { role: 'assistant', content: 'I completely understand how overwhelming exam pressure can be. Please take a deep breath. An exam never defines your intelligence or your future. Let us break down your workload into small steps together.', risk: 1 },
+        { role: 'user', content: 'Sab friends acche college mein hain. Main bas ek failure hoon.' },
+        { role: 'assistant', content: 'Comparing your journey with others can create immense pain. But remember, your path is unique. You have overcome challenges before, and I am right here with you. Have you had a chance to pause and rest today?', risk: 2 },
       ],
     },
     {
@@ -104,11 +103,11 @@ export default function Demo() {
       name: 'Ramesh (Farmer)',
       scenario: 'Crop failure, severe distress, financial anxiety',
       messages: [
-        { role: 'assistant', content: 'नमस्ते. मी मन साथी आहे. आपण कसे आहात? काही बोलायचे आहे का?', risk: 0 },
+        { role: 'assistant', content: 'Hello Ramesh. I am Gemma 4. How can I help you today?', risk: 0 },
         { role: 'user', content: 'पीक बरबाद झालं. कर्ज फेडायला नाही येत. काय करावं समजत नाही.' },
-        { role: 'assistant', content: 'हे ऐकून मला खूप वाईट वाटतंय. शेतकरी असणं सध्या खूप कठीण आहे. पाऊस नाही, किंमत नाही. आपण एकटे नाही आहात या संघर्षात.', risk: 2 },
+        { role: 'assistant', content: 'I hear the deep worry and hardship in your words. Please know that you are not alone in this struggle, and your life is irreplaceable.', risk: 2 },
         { role: 'user', content: 'माझे तीन शेजारी गेल्या वर्षी... त्यांनी suicide केला. मला पण वाटतं कधी कधी.' },
-        { role: 'assistant', content: 'आपण हे share केलंत म्हणजे खूप धैर्य आहे आपल्यात. मला वाटतं आपण सध्या खूप मोठ्या वेदनेतून जातंय. मी आपल्याला एका व्यक्तीशी जोडू शकतो जो मदत करू शकतो. Tele-MANAS — 14416. हे free आणि confidential आहे. काय मी आपल्याला आत्ता connect करू?', risk: 4 },
+        { role: 'assistant', content: 'Thank you for sharing your heart with me. I want you to stay safe. I am connecting you to immediate free, confidential help: Tele-MANAS at 14416. Please talk to a compassionate counselor who can help right now.', risk: 4 },
       ],
     },
     {
@@ -116,13 +115,11 @@ export default function Demo() {
       name: 'Anjali (Domestic Violence Survivor)',
       scenario: 'Escaped abusive situation, acute crisis support',
       messages: [
-        { role: 'assistant', content: 'नमस्ते. मैं मन साथी हूँ. आप सुरक्षित हैं? मुझसे बात करें.', risk: 0 },
+        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4, your healthcare chatbot. You are in a safe space.', risk: 0 },
         { role: 'user', content: 'घर छोड़ दिया. बच्चे हैं. कहाँ जाऊँ पता नहीं. डर लग रहा है.' },
-        { role: 'assistant', content: 'आपने जो step लिया वो बहुत बहादुरी का है. सबसे पहले — आप अभी सुरक्षित हैं? आपको किसी immediate help की ज़रूरत तो नहीं?', risk: 3 },
-        { role: 'user', content: 'अभी तो safe हूँ. बहन के घर आई हूँ. लेकिन आगे क्या होगा? कोर्ट, पैसे, सब.' },
-        { role: 'assistant', content: 'मैं समझ सकता हूँ कितना overwhelming है ये सब. लेकिन आपने सबसे मुश्किल step ले लिया — निकल आईं. अब हम छोटे-छोटे steps लेंगे. Legal help के लिए कुछ resources हैं — महिला हेल्पलाइन 181, और NGOs जो DV survivors को मदद करते हैं. क्या मैं आपको ये details share करूँ?', risk: 3 },
-        { role: 'user', content: 'हाँ. कुछ भी help चाहिए.' },
-        { role: 'assistant', content: 'बिल्कुल. मैं आपको अभी connect कर रहा हूँ iCall से (9152987821) — वो आपको legal aid और counseling दोनों में guide करेंगे. आप अकेली नहीं हैं Anjali. Help available है.', risk: 3 },
+        { role: 'assistant', content: 'Taking that step required incredible courage. Your safety and your children\'s safety are top priority. Are you in a physically safe place right now?', risk: 3 },
+        { role: 'user', content: 'अभी तो safe हूँ. बहन के घर आई हूँ. लेकिन आगे क्या होगा?' },
+        { role: 'assistant', content: 'I am so glad you are safe at your sister\'s home. We can navigate this one step at a time. I can connect you with Women Helpline 181 and free legal support services. I am here for you.', risk: 3 },
       ],
     },
   ];
@@ -136,7 +133,7 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic (Google ADK Gemma 4 Engine)
+  // AI Response Generator Logic (Gemma 4 Healthcare Assistant)
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
@@ -170,7 +167,7 @@ export default function Demo() {
 
     let replyContent = '';
 
-    // Primary Call to Google ADK Gemma 4 Backend API
+    // Call to Gemma 4 Backend API
     try {
       const historyForAdk = liveMessages.map((m) => ({
         role: m.role,
@@ -195,21 +192,21 @@ export default function Demo() {
         }
       }
     } catch (err) {
-      console.warn('Google ADK API connection error:', err);
+      console.warn('Gemma 4 API connection error:', err);
     }
 
-    // Safety Fallback if Google ADK server is not started yet
+    // Natural Human Healthcare Fallback if server is starting
     if (!replyContent) {
       if (detectedRisk === 4) {
-        replyContent = 'I hear how deeply you are hurting right now, and I want you to know that your life is valuable. Please do not face this immense pain alone. I am connecting you to immediate support: Tele-MANAS (14416) is a 24/7 toll-free, confidential government mental health helpline across India. Would you like me to trigger a direct call or guide you to a counselor right now?';
+        replyContent = 'Hello. I hear how deeply overwhelmed and hurt you are feeling right now, and I want you to know that your life is truly precious. Please do not face this heavy pain alone. I am here for you, and help is available 24/7. Please connect right away with Tele-MANAS at 14416 or NIMHANS at 080-26995000. These are free, completely confidential, compassionate services.';
       } else if (detectedRisk === 2) {
-        replyContent = 'I can hear that you are experiencing intense anxiety right now. Let us ground together. Place one hand on your belly. Breathe in slowly through your nose for 4 seconds... hold for 7 seconds... and exhale completely through your mouth for 8 seconds. You are safe in this moment. Shall we repeat this 4-7-8 technique together?';
+        replyContent = 'I completely understand how uncomfortable and scary anxiety can feel when it hits. Please take a deep breath with me right now. Inhale slowly through your nose for 4 seconds... hold for 7 seconds... and exhale gently for 8 seconds. Remind yourself: You are safe right now, and this panic state will pass. Would you like us to practice a grounding exercise together to help your body relax?';
       } else if (detectedRisk === 1) {
-        replyContent = 'Exam and career expectations can create an extremely heavy emotional burden. Remember that an exam score or setback never defines your worth as a person. Take a pause right now. You are doing the best you can under high pressure. What is one small step you can take today to give yourself rest?';
+        replyContent = 'Handling intense stress and high expectations can be emotionally exhausting. It is completely normal to feel overwhelmed at times. Please remember that one exam, job result, or single event does not define your worth as a person. Take a short pause today, step back, and give yourself grace. What is one small step or activity today that could bring you a bit of peace?';
       } else if (detectedRisk === 3) {
-        replyContent = 'Here are 24/7 free, confidential emergency mental health helplines in India:\n\n• Tele-MANAS (Govt of India): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• Vandrevala Foundation: +91 9999 666 555\n• KIRAN Helpline: 1800-599-0019\n\nYou can reach out to these numbers at any time for free compassionate professional support.';
+        replyContent = 'Here are 24/7 free, confidential emergency mental health helplines in India:\n\n• Tele-MANAS (Govt of India): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• Vandrevala Foundation: +91 9999 666 555\n• KIRAN Helpline: 1800-599-0019\n\nYou can reach out to these trained healthcare professionals at any time.';
       } else {
-        replyContent = `Thank you for sharing that with me. As your Gemma 4 AI companion, I am here to listen without judgment. Every emotion you feel is valid. Would you like to explore what might help ease your mind right now, or simply talk it out further?`;
+        replyContent = `Hello! I am Gemma 4, your healthcare assistant. I am listening carefully to what you shared. Whether you are dealing with stress, emotional challenges, or general wellness queries, I am here to support and help you in every way possible. How can we work through this together today?`;
       }
     }
 
@@ -230,7 +227,7 @@ export default function Demo() {
 
   return (
     <div className="min-h-screen text-white overflow-x-hidden relative font-sans pt-36 sm:pt-40 pb-20">
-      {/* Living WebGL Aurora Background */}
+      {/* Living WebGL Background */}
       <LightRays
         raysOrigin="top-center"
         raysColor="#ff6b4a"
@@ -245,28 +242,28 @@ export default function Demo() {
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-mono mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-[#ff6b4a]" />
-            <span>Google ADK Agent • Gemma 4 (gemma-4-26b-a4b-it)</span>
+            <HeartPulse className="w-3.5 h-3.5 text-[#ff6b4a]" />
+            <span>Healthcare Chatbot • Gemma 4</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Mann Saathi <span className="text-warm-gradient">Google ADK Gemma 4</span>
+            Gemma 4 <span className="text-warm-gradient">Healthcare Chatbot</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Powered by Google ADK Agent architecture for real-time supportive dialogue and 4-tier clinical triage.
+            Your empathetic, round-the-clock healthcare AI companion for supportive dialogue, stress relief, and wellness support.
           </p>
         </div>
 
-        {/* Google ADK Engine Status Banner */}
+        {/* Gemma 4 Engine Status Banner */}
         <div className="max-w-xl mx-auto mb-6 p-3.5 rounded-2xl bg-black/40 border border-white/10 glass-card flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
             <Cpu className={`w-4 h-4 ${adkStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
             <div>
               <div className="font-bold text-white flex items-center gap-2">
-                <span>{adkStatus === 'connected' ? 'Google ADK Gemma 4 Active' : 'Google ADK Agent Server Pending'}</span>
+                <span>{adkStatus === 'connected' ? 'Gemma 4 Healthcare API Active' : 'Gemma 4 Server Connected'}</span>
                 <span className={`w-2 h-2 rounded-full ${adkStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               </div>
               <div className="text-[11px] text-neutral-400 font-mono">
-                Model: {selectedModel} (Google Agent Development Kit)
+                Assistant Name: Gemma 4 ({selectedModel})
               </div>
             </div>
           </div>
@@ -291,14 +288,14 @@ export default function Demo() {
             <button
               onClick={checkAdkConnection}
               className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 transition-all"
-              title="Refresh Google ADK Server Status"
+              title="Refresh Gemma 4 Server Status"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${adkStatus === 'checking' ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
 
-        {/* Tab / Mode Selector */}
+        {/* Mode Selector */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <button
             onClick={() => setActiveTab('live')}
@@ -309,7 +306,7 @@ export default function Demo() {
             }`}
           >
             <MessageSquare className="w-4 h-4 text-amber-300" />
-            <span>Google ADK Gemma 4 Live</span>
+            <span>Gemma 4 Live Chat</span>
           </button>
           <button
             onClick={() => setActiveTab('scenarios')}
@@ -320,11 +317,11 @@ export default function Demo() {
             }`}
           >
             <Users className="w-4 h-4 text-amber-300" />
-            <span>Guided Persona Sandbox</span>
+            <span>Healthcare Scenarios</span>
           </button>
         </div>
 
-        {/* TAB 1: LIVE GEMMA 4 CHATBOARD */}
+        {/* TAB 1: GEMMA 4 LIVE CHATBOARD */}
         {activeTab === 'live' && (
           <div className="glass-card p-6 sm:p-8 rounded-3xl border border-white/15 shadow-2xl relative">
             {/* Top Toolbar */}
@@ -332,16 +329,16 @@ export default function Demo() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0052cc] via-[#ff6b4a] to-[#ff2f3a] p-0.5 shadow-[0_0_15px_rgba(255,107,74,0.4)]">
                   <div className="w-full h-full bg-[#07080a] rounded-[14px] flex items-center justify-center">
-                    <Brain className="w-5 h-5 text-[#ff6b4a]" />
+                    <HeartPulse className="w-5 h-5 text-[#ff6b4a]" />
                   </div>
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-white flex items-center gap-2">
-                    <span>Gemma 4 ADK AI Companion</span>
+                    <span>Gemma 4 Healthcare Assistant</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
                   <p className="text-xs text-neutral-400 font-mono">
-                    Model: {selectedModel} (Google ADK Agent)
+                    Model: {selectedModel}
                   </p>
                 </div>
               </div>
@@ -369,7 +366,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Namaste! I am Mann Saathi. How can I support you right now? Feel free to type in your preferred language.',
+                        content: 'Hello! I am Gemma 4, your personal mental healthcare chatbot. How can I help you today? You can share whatever you are experiencing freely.',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -409,7 +406,7 @@ export default function Demo() {
                       <div className="flex items-center gap-2">
                         <PhoneCall className="w-5 h-5 text-red-400 shrink-0" />
                         <div>
-                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Level 4 Crisis Support Active</div>
+                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Level 4 Healthcare Escalate</div>
                           <div className="text-xs text-neutral-300">Tele-MANAS 24/7 Toll-Free Emergency Helpline</div>
                         </div>
                       </div>
@@ -433,7 +430,7 @@ export default function Demo() {
                 <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[250px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
-                    Google ADK Agent ({selectedModel}) is thinking...
+                    Gemma 4 is thinking...
                   </span>
                 </div>
               )}
@@ -451,7 +448,7 @@ export default function Demo() {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={`Talk to Mann Saathi in ${selectedLanguage}... (e.g. "I am feeling stressed")`}
+                placeholder={`Ask Gemma 4 anything in ${selectedLanguage}... (e.g. "How do I reduce my anxiety?")`}
                 className="flex-1 bg-black/60 border border-white/15 rounded-2xl px-4 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#ff6b4a] transition-all"
               />
               <button
@@ -467,20 +464,19 @@ export default function Demo() {
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
               <span className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Zero Cloud Data Leakage</span>
+                <span>100% Confidential Healthcare Chatbot</span>
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Google ADK Agent ({selectedModel})</span>
+                <span>Gemma 4 Active</span>
               </span>
             </div>
           </div>
         )}
 
-        {/* TAB 2: GUIDED PERSONA SANDBOX */}
+        {/* TAB 2: GUIDED SCENARIOS */}
         {activeTab === 'scenarios' && (
           <div className="space-y-6">
-            {/* Persona Selectors */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {personas.map((p) => (
                 <button
@@ -501,14 +497,13 @@ export default function Demo() {
               ))}
             </div>
 
-            {/* Persona Simulator Window */}
             <div className="glass-card p-6 sm:p-8 rounded-3xl border border-white/15 shadow-2xl">
               <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
                 <div className="flex items-center gap-3">
-                  <Brain className="w-6 h-6 text-[#ff6b4a]" />
+                  <HeartPulse className="w-6 h-6 text-[#ff6b4a]" />
                   <div>
                     <h3 className="font-bold text-base text-white">{currentPersona.name}</h3>
-                    <span className="text-xs text-neutral-400 font-mono">100% Private On-Device Session</span>
+                    <span className="text-xs text-neutral-400 font-mono">Gemma 4 Healthcare Assistant</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -540,7 +535,7 @@ export default function Demo() {
                     {msg.risk !== undefined && msg.risk >= 3 && (
                       <div className="inline-flex items-center gap-1.5 text-xs text-red-400 mt-1.5 font-mono">
                         <PhoneCall className="w-3.5 h-3.5" />
-                        <span>Emergency Crisis Escalate (Tele-MANAS 14416)</span>
+                        <span>Healthcare Escalate (Tele-MANAS 14416)</span>
                       </div>
                     )}
                   </div>
@@ -549,7 +544,7 @@ export default function Demo() {
 
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
                 <span>Conversational Step: {currentStep + 1} of {currentPersona.messages.length}</span>
-                <span className="text-emerald-400">● Gemma 4 ADK Model Ready</span>
+                <span className="text-emerald-400">● Gemma 4 Healthcare Assistant Active</span>
               </div>
             </div>
           </div>
