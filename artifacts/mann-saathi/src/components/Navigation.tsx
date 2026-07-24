@@ -44,7 +44,7 @@ export function Navigation() {
   return (
     <>
       {/* Fixed Upper-Middle Floating Header Bar */}
-      <nav className="fixed top-4 inset-x-0 mx-auto w-[92%] max-w-4xl z-[9999] rounded-full glass-pill p-2 px-4 sm:px-6 flex items-center justify-between shadow-2xl transition-all">
+      <nav className="fixed top-4 inset-x-0 mx-auto w-[92%] max-w-4xl z-40 rounded-full glass-pill p-2 px-4 sm:px-6 flex items-center justify-between shadow-2xl transition-all">
         
         {/* Highlighted Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
@@ -265,7 +265,7 @@ export function Navigation() {
 
       {/* Interactive Report Bug Modal */}
       {bugModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div
             className="fixed inset-0 bg-black/80 backdrop-blur-md"
             onClick={() => setBugModalOpen(false)}
