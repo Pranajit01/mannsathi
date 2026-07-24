@@ -27,7 +27,7 @@ export function Navigation() {
   // Primary Header Bar links (Home, How to Use this AI, Gemma Tech System)
   const headerLinks = [
     { href: '/', label: 'Home' },
-    { href: '/demo', label: 'How to Use this AI' },
+    { href: '/demo', label: 'Gemma AI Chatboard' },
     { href: '/blueprint', label: 'Gemma Tech System' },
   ];
 
