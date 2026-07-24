@@ -9,7 +9,6 @@ import {
   Languages, 
   MessageSquare,
   Users,
-  Zap,
   CheckCircle2,
   Cpu,
   RefreshCw
@@ -126,15 +125,6 @@ export default function Demo() {
         { role: 'assistant', content: 'बिल्कुल. मैं आपको अभी connect कर रहा हूँ iCall से (9152987821) — वो आपको legal aid और counseling दोनों में guide करेंगे. आप अकेली नहीं हैं Anjali. Help available है.', risk: 3 },
       ],
     },
-  ];
-
-  // Suggested Prompts for Quick Tap
-  const quickPrompts = [
-    'I feel very stressed about my exams & career pressure.',
-    'I have sudden anxiety and my heart is racing fast.',
-    'Can we do a 4-7-8 breathing exercise together?',
-    'I feel lonely and isolated from everyone.',
-    'What emergency helpline numbers are available 24/7 in India?',
   ];
 
   const languages = ['Hinglish', 'English', 'Hindi (हिंदी)', 'Bengali (বাংলা)', 'Marathi (मराठी)'];
@@ -390,25 +380,6 @@ export default function Demo() {
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
-              </div>
-            </div>
-
-            {/* Quick Suggestion Chips */}
-            <div className="mb-6">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-2 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-amber-300" />
-                <span>Quick Prompt Ideas</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {quickPrompts.map((prompt, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleSendMessage(prompt)}
-                    className="text-xs bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#ff6b4a]/50 text-neutral-300 hover:text-white px-3 py-1.5 rounded-xl transition-all text-left"
-                  >
-                    {prompt}
-                  </button>
-                ))}
               </div>
             </div>
 
