@@ -183,8 +183,8 @@ export default function Blueprint() {
             <div className="glass-card p-8 rounded-3xl border border-white/15 shadow-2xl relative overflow-hidden">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
                 <div>
-                  <h3 className="font-sans font-bold text-2xl text-white mb-1">Interactive Animated SVG Architecture Journey</h3>
-                  <p className="text-sm text-neutral-400 font-normal">Click through steps to animate the glowing SVG pipeline connector line forward.</p>
+                  <h3 className="font-sans font-bold text-2xl text-white mb-1">End-to-End System Pipeline</h3>
+                  <p className="text-sm text-neutral-400 font-normal">Explore the 5-stage execution pipeline, from local speech input to zero-cloud clinical safety screening.</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button

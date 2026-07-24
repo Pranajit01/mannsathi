@@ -62,7 +62,7 @@ Google's **Gemma** open model series forms the core intelligent engine of Mind C
   - **Connect with Architecture**: Direct access to the Gemma INT4 technical system blueprint (`/blueprint`).
   - **Connect with Helpline**: Direct 1-tap dial trigger for Tele-MANAS (`14416`) and NIMHANS (`080-26995000`).
   - **Report Bug**: Interactive modal for submitting feedback directly to the lead architect.
-- **Interactive Animated SVG Architecture Journey**: A dynamic 5-step architecture pipeline with a glowing SVG connector line (`strokeDashoffset`) that draws itself forward dynamically as you step through the workflow (`/blueprint`).
+- **End-to-End System Pipeline**: A 5-stage architecture pipeline covering local input processing, on-device Gemma inference, clinical safety matrix, and offline helpline escalation (`/blueprint`).
 - **4-Tier Clinical Safety Matrix**:
   - **Level 1 (Mild Stress)**: Self-guided CBT journal prompts.
   - **Level 2 (Moderate Anxiety)**: 4-7-8 breathing exercises & grounding.
