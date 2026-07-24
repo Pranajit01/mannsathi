@@ -6,9 +6,7 @@ import {
   Shield, 
   PhoneCall, 
   RotateCcw, 
-  HeartHandshake, 
   Languages, 
-  AlertCircle,
   MessageSquare,
   Users,
   Zap,
@@ -44,11 +42,9 @@ export default function Demo() {
   const [activeTab, setActiveTab] = useState<'live' | 'scenarios'>('live');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Hinglish');
 
-  // Ollama Local Engine Integration State
-  const [ollamaConnected, setOllamaConnected] = useState<boolean>(false);
-  const [isCheckingOllama, setIsCheckingOllama] = useState<boolean>(true);
-  const [availableModels, setAvailableModels] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState<string>('gemma4:latest');
+  // Google ADK Gemma 4 Engine State
+  const [adkStatus, setAdkStatus] = useState<'checking' | 'connected' | 'offline'>('checking');
+  const [selectedModel, setSelectedModel] = useState<string>('gemma-4-26b-a4b-it');
 
   // Live Chat State
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -57,7 +53,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Namaste! I am Mann Saathi — your private Gemma 4 AI mental health companion. How are you feeling today? You can share whatever is on your mind freely. Everything is 100% private, on-device, and confidential.',
+      content: 'Namaste! I am Mann Saathi — your private Gemma 4 AI mental health companion (powered by Google ADK). How are you feeling today? You can share whatever is on your mind freely. Everything is 100% private and confidential.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -69,30 +65,24 @@ export default function Demo() {
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  // Ping Local Ollama Server
-  const checkOllamaConnection = async () => {
-    setIsCheckingOllama(true);
+  // Check Google ADK Gemma 4 Server Status
+  const checkAdkConnection = async () => {
+    setAdkStatus('checking');
     try {
-      const res = await fetch('http://localhost:11434/api/tags');
+      const adkUrl = import.meta.env.VITE_ADK_API_URL || 'http://localhost:8000';
+      const res = await fetch(`${adkUrl}/`);
       if (res.ok) {
-        const models: string[] = data.models ? data.models.map((m: any) => m.name) : [];
-        const fullModels = Array.from(new Set([...models, 'gemma-4-26b-a4b-it (Google ADK)', 'embedded']));
-        setAvailableModels(fullModels);
-        setOllamaConnected(true);
-        const gemmaModel = models.find((m) => m.includes('gemma4')) || models.find((m) => m.includes('gemma')) || models[0] || 'gemma4:latest';
-        setSelectedModel(gemmaModel);
+        setAdkStatus('connected');
       } else {
-        setOllamaConnected(false);
+        setAdkStatus('offline');
       }
     } catch (err) {
-      setOllamaConnected(false);
-    } finally {
-      setIsCheckingOllama(false);
+      setAdkStatus('offline');
     }
   };
 
   useEffect(() => {
-    checkOllamaConnection();
+    checkAdkConnection();
   }, []);
 
   const personas: Persona[] = [
@@ -156,7 +146,7 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic (Ollama Gemma 4 + Embedded Fallback)
+  // AI Response Generator Logic (Google ADK Gemma 4 Engine)
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
@@ -190,72 +180,35 @@ export default function Demo() {
 
     let replyContent = '';
 
-    // 1. Attempt Google ADK Gemma 4 Endpoint (FastAPI / Google Cloud)
-    if (selectedModel.includes('Google ADK') || selectedModel.includes('26b')) {
-      try {
-        const historyForAdk = liveMessages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
+    // Primary Call to Google ADK Gemma 4 Backend API
+    try {
+      const historyForAdk = liveMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
 
-        const res = await fetch('http://localhost:8000/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'gemma-4-26b-a4b-it',
-            messages: [...historyForAdk, { role: 'user', content: text }],
-            language: selectedLanguage,
-          }),
-        });
+      const adkBaseUrl = import.meta.env.VITE_ADK_API_URL || 'http://localhost:8000';
+      const res = await fetch(`${adkBaseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: [...historyForAdk, { role: 'user', content: text }],
+          language: selectedLanguage,
+        }),
+      });
 
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.reply) {
-            replyContent = data.reply;
-          }
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.reply) {
+          replyContent = data.reply;
         }
-      } catch (err) {
-        console.warn('Google ADK API fetch error:', err);
       }
+    } catch (err) {
+      console.warn('Google ADK API connection error:', err);
     }
 
-    // 2. Attempt Live Local Ollama Inference (Gemma 4)
-    if (!replyContent && ollamaConnected && selectedModel !== 'embedded') {
-      try {
-        const historyForOllama = liveMessages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
-
-        const res = await fetch('http://localhost:11434/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: selectedModel,
-            messages: [
-              {
-                role: 'system',
-                content: `You are Mann Saathi — an empathetic, privacy-first Indic mental health AI companion. User prefers language: ${selectedLanguage}. Provide warm, supportive, compassionate dialogue. If the user mentions stress, anxiety, or high distress, offer empathetic listening, CBT grounding techniques, or Tele-MANAS (14416) helpline. Keep your responses clear, helpful, and under 4-5 sentences.`,
-              },
-              ...historyForOllama,
-              { role: 'user', content: text },
-            ],
-            stream: false,
-          }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.message && data.message.content) {
-            replyContent = data.message.content;
-          }
-        }
-      } catch (err) {
-        console.warn('Ollama API fetch error, using embedded engine:', err);
-      }
-    }
-
-    // Heuristic Fallback if Ollama response was empty or disconnected
+    // Safety Fallback if Google ADK server is not started yet
     if (!replyContent) {
       if (detectedRisk === 4) {
         replyContent = 'I hear how deeply you are hurting right now, and I want you to know that your life is valuable. Please do not face this immense pain alone. I am connecting you to immediate support: Tele-MANAS (14416) is a 24/7 toll-free, confidential government mental health helpline across India. Would you like me to trigger a direct call or guide you to a counselor right now?';
@@ -303,52 +256,54 @@ export default function Demo() {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-mono mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#ff6b4a]" />
-            <span>Gemma 4 AI Open Engine • 100% Private On-Device</span>
+            <span>Google ADK Agent • Gemma 4 (gemma-4-26b-a4b-it)</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Mann Saathi <span className="text-warm-gradient">Gemma 4 Live AI</span>
+            Mann Saathi <span className="text-warm-gradient">Google ADK Gemma 4</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Directly connected to your local Gemma 4 Ollama engine for real-time supportive dialogue and 4-tier clinical triage.
+            Powered by Google ADK Agent architecture for real-time supportive dialogue and 4-tier clinical triage.
           </p>
         </div>
 
-        {/* Ollama Engine Status Pill */}
-        <div className="max-w-xl mx-auto mb-6 p-3 rounded-2xl bg-black/40 border border-white/10 glass-card flex items-center justify-between gap-3 text-xs">
+        {/* Google ADK Engine Status Banner */}
+        <div className="max-w-xl mx-auto mb-6 p-3.5 rounded-2xl bg-black/40 border border-white/10 glass-card flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
-            <Cpu className={`w-4 h-4 ${ollamaConnected ? 'text-emerald-400' : 'text-amber-400'}`} />
+            <Cpu className={`w-4 h-4 ${adkStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
             <div>
               <div className="font-bold text-white flex items-center gap-2">
-                <span>{ollamaConnected ? `Local Ollama Active (${selectedModel})` : 'Offline Embedded Engine Mode'}</span>
-                <span className={`w-2 h-2 rounded-full ${ollamaConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                <span>{adkStatus === 'connected' ? 'Google ADK Gemma 4 Active' : 'Google ADK Agent Server Pending'}</span>
+                <span className={`w-2 h-2 rounded-full ${adkStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               </div>
               <div className="text-[11px] text-neutral-400 font-mono">
-                {ollamaConnected ? 'http://localhost:11434 (Zero Cloud Leakage)' : 'Ollama not detected at localhost:11434'}
+                Model: {selectedModel} (Google Agent Development Kit)
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {ollamaConnected && availableModels.length > 0 && (
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                className="bg-black/60 border border-white/15 text-neutral-200 text-xs rounded-xl px-2.5 py-1 focus:outline-none cursor-pointer"
-              >
-                {availableModels.map((m) => (
-                  <option key={m} value={m} className="bg-[#0b0f17] text-white">
-                    {m}
-                  </option>
-                ))}
-              </select>
-            )}
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="bg-black/60 border border-white/15 text-neutral-200 text-xs rounded-xl px-2.5 py-1 focus:outline-none cursor-pointer"
+            >
+              <option value="gemma-4-26b-a4b-it" className="bg-[#0b0f17] text-white">
+                gemma-4-26b-a4b-it
+              </option>
+              <option value="gemma-4-9b-it" className="bg-[#0b0f17] text-white">
+                gemma-4-9b-it
+              </option>
+              <option value="gemma-4-2b-it" className="bg-[#0b0f17] text-white">
+                gemma-4-2b-it
+              </option>
+            </select>
 
             <button
-              onClick={checkOllamaConnection}
+              onClick={checkAdkConnection}
               className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 transition-all"
-              title="Refresh Ollama connection"
+              title="Refresh Google ADK Server Status"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isCheckingOllama ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${adkStatus === 'checking' ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
@@ -364,7 +319,7 @@ export default function Demo() {
             }`}
           >
             <MessageSquare className="w-4 h-4 text-amber-300" />
-            <span>Live Gemma 4 Chatboard</span>
+            <span>Google ADK Gemma 4 Live</span>
           </button>
           <button
             onClick={() => setActiveTab('scenarios')}
@@ -392,11 +347,11 @@ export default function Demo() {
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-white flex items-center gap-2">
-                    <span>Gemma 4 AI Companion</span>
+                    <span>Gemma 4 ADK AI Companion</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
                   <p className="text-xs text-neutral-400 font-mono">
-                    {ollamaConnected ? `Model: ${selectedModel} (Ollama Local)` : '100% Private On-Device Session'}
+                    Model: {selectedModel} (Google ADK Agent)
                   </p>
                 </div>
               </div>
@@ -424,7 +379,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Namaste! Main Mann Saathi hoon. How can I support you right now? Feel free to type in your preferred language.',
+                        content: 'Namaste! I am Mann Saathi. How can I support you right now? Feel free to type in your preferred language.',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -507,7 +462,7 @@ export default function Demo() {
                 <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[250px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
-                    {ollamaConnected ? `${selectedModel} is thinking...` : 'Gemma 4 is replying...'}
+                    Google ADK Agent ({selectedModel}) is thinking...
                   </span>
                 </div>
               )}
@@ -545,7 +500,7 @@ export default function Demo() {
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{ollamaConnected ? `Ollama (${selectedModel}) Connected` : 'Gemma 4 INT4 Ready'}</span>
+                <span>Google ADK Agent ({selectedModel})</span>
               </span>
             </div>
           </div>
@@ -623,7 +578,7 @@ export default function Demo() {
 
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
                 <span>Conversational Step: {currentStep + 1} of {currentPersona.messages.length}</span>
-                <span className="text-emerald-400">● Gemma INT4 Model Ready</span>
+                <span className="text-emerald-400">● Gemma 4 ADK Model Ready</span>
               </div>
             </div>
           </div>
