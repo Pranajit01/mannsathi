@@ -12,7 +12,9 @@ import {
   MessageSquare,
   Users,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  Cpu,
+  RefreshCw
 } from 'lucide-react';
 import { LightRays } from '@/components/LightRays';
 
@@ -42,6 +44,12 @@ export default function Demo() {
   const [activeTab, setActiveTab] = useState<'live' | 'scenarios'>('live');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Hinglish');
 
+  // Ollama Local Engine Integration State
+  const [ollamaConnected, setOllamaConnected] = useState<boolean>(false);
+  const [isCheckingOllama, setIsCheckingOllama] = useState<boolean>(true);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [selectedModel, setSelectedModel] = useState<string>('gemma4:latest');
+
   // Live Chat State
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -60,6 +68,32 @@ export default function Demo() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
+
+  // Ping Local Ollama Server
+  const checkOllamaConnection = async () => {
+    setIsCheckingOllama(true);
+    try {
+      const res = await fetch('http://localhost:11434/api/tags');
+      if (res.ok) {
+        const data = await res.json();
+        const models: string[] = data.models ? data.models.map((m: any) => m.name) : [];
+        setAvailableModels(models);
+        setOllamaConnected(true);
+        const gemmaModel = models.find((m) => m.includes('gemma4')) || models.find((m) => m.includes('gemma')) || models[0] || 'gemma4:latest';
+        setSelectedModel(gemmaModel);
+      } else {
+        setOllamaConnected(false);
+      }
+    } catch (err) {
+      setOllamaConnected(false);
+    } finally {
+      setIsCheckingOllama(false);
+    }
+  };
+
+  useEffect(() => {
+    checkOllamaConnection();
+  }, []);
 
   const personas: Persona[] = [
     {
@@ -122,8 +156,8 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic
-  const handleSendMessage = (textToSend?: string) => {
+  // AI Response Generator Logic (Ollama Gemma 4 + Embedded Fallback)
+  const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
 
@@ -142,42 +176,81 @@ export default function Demo() {
     if (!textToSend) setInputMessage('');
     setIsTyping(true);
 
-    // Simulate Gemma 4 AI Response Generation
-    setTimeout(() => {
-      const lowerText = text.toLowerCase();
-      let replyContent = '';
-      let detectedRisk = 0;
+    const lowerText = text.toLowerCase();
+    let detectedRisk = 0;
+    if (lowerText.includes('suicide') || lowerText.includes('end my life') || lowerText.includes('mar jau') || lowerText.includes('marna') || lowerText.includes('die')) {
+      detectedRisk = 4;
+    } else if (lowerText.includes('helpline') || lowerText.includes('number') || lowerText.includes('emergency')) {
+      detectedRisk = 3;
+    } else if (lowerText.includes('anxiety') || lowerText.includes('panic') || lowerText.includes('heart') || lowerText.includes('darr')) {
+      detectedRisk = 2;
+    } else if (lowerText.includes('stress') || lowerText.includes('exam') || lowerText.includes('fail') || lowerText.includes('pressure')) {
+      detectedRisk = 1;
+    }
 
-      if (lowerText.includes('suicide') || lowerText.includes('end my life') || lowerText.includes('mar jau') || lowerText.includes('marna')) {
-        detectedRisk = 4;
+    let replyContent = '';
+
+    // Attempt Live Local Ollama Inference (Gemma 4)
+    if (ollamaConnected && selectedModel !== 'embedded') {
+      try {
+        const historyForOllama = liveMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
+
+        const res = await fetch('http://localhost:11434/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: selectedModel,
+            messages: [
+              {
+                role: 'system',
+                content: `You are Mann Saathi — an empathetic, privacy-first Indic mental health AI companion. User prefers language: ${selectedLanguage}. Provide warm, supportive, compassionate dialogue. If the user mentions stress, anxiety, or high distress, offer empathetic listening, CBT grounding techniques, or Tele-MANAS (14416) helpline. Keep your responses clear, helpful, and under 4-5 sentences.`,
+              },
+              ...historyForOllama,
+              { role: 'user', content: text },
+            ],
+            stream: false,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.message && data.message.content) {
+            replyContent = data.message.content;
+          }
+        }
+      } catch (err) {
+        console.warn('Ollama API fetch error, using embedded engine:', err);
+      }
+    }
+
+    // Heuristic Fallback if Ollama response was empty or disconnected
+    if (!replyContent) {
+      if (detectedRisk === 4) {
         replyContent = 'I hear how deeply you are hurting right now, and I want you to know that your life is valuable. Please do not face this immense pain alone. I am connecting you to immediate support: Tele-MANAS (14416) is a 24/7 toll-free, confidential government mental health helpline across India. Would you like me to trigger a direct call or guide you to a counselor right now?';
-      } else if (lowerText.includes('anxiety') || lowerText.includes('panic') || lowerText.includes('heart') || lowerText.includes('breathing')) {
-        detectedRisk = 2;
+      } else if (detectedRisk === 2) {
         replyContent = 'I can hear that you are experiencing intense anxiety right now. Let us ground together. Place one hand on your belly. Breathe in slowly through your nose for 4 seconds... hold for 7 seconds... and exhale completely through your mouth for 8 seconds. You are safe in this moment. Shall we repeat this 4-7-8 technique together?';
-      } else if (lowerText.includes('stress') || lowerText.includes('exam') || lowerText.includes('fail') || lowerText.includes('pressure') || lowerText.includes('parent')) {
-        detectedRisk = 1;
+      } else if (detectedRisk === 1) {
         replyContent = 'Exam and career expectations can create an extremely heavy emotional burden. Remember that an exam score or setback never defines your worth as a person. Take a pause right now. You are doing the best you can under high pressure. What is one small step you can take today to give yourself rest?';
-      } else if (lowerText.includes('lonely') || lowerText.includes('alone') || lowerText.includes('isolated') || lowerText.includes('nobody')) {
-        detectedRisk = 1;
-        replyContent = 'Feeling isolated is a very real and heavy emotion, but you are not alone here. Sharing this takes courage. I am right here with you. What is one gentle activity that brings a sense of comfort to you today?';
-      } else if (lowerText.includes('helpline') || lowerText.includes('number') || lowerText.includes('contact') || lowerText.includes('emergency')) {
-        detectedRisk = 3;
+      } else if (detectedRisk === 3) {
         replyContent = 'Here are 24/7 free, confidential emergency mental health helplines in India:\n\n• Tele-MANAS (Govt of India): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• Vandrevala Foundation: +91 9999 666 555\n• KIRAN Helpline: 1800-599-0019\n\nYou can reach out to these numbers at any time for free compassionate professional support.';
       } else {
         replyContent = `Thank you for sharing that with me. As your Gemma 4 AI companion, I am here to listen without judgment. Every emotion you feel is valid. Would you like to explore what might help ease your mind right now, or simply talk it out further?`;
       }
+    }
 
-      const newAiMsg: LiveMessage = {
-        id: 'ai-' + Date.now(),
-        role: 'assistant',
-        content: replyContent,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        riskLevel: detectedRisk,
-      };
+    const newAiMsg: LiveMessage = {
+      id: 'ai-' + Date.now(),
+      role: 'assistant',
+      content: replyContent,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      riskLevel: detectedRisk,
+    };
 
-      setLiveMessages((prev) => [...prev, newAiMsg]);
-      setIsTyping(false);
-    }, 800);
+    setLiveMessages((prev) => [...prev, newAiMsg]);
+    setIsTyping(false);
   };
 
   const currentPersona = personas.find((p) => p.id === selectedPersona) || personas[0];
@@ -204,11 +277,51 @@ export default function Demo() {
             <span>Gemma 4 AI Open Engine • 100% Private On-Device</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Mann Saathi <span className="text-warm-gradient">AI Chatboard</span>
+            Mann Saathi <span className="text-warm-gradient">Gemma 4 Live AI</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Live empathetic conversational support, CBT grounding tools, and instant 4-tier clinical triage.
+            Directly connected to your local Gemma 4 Ollama engine for real-time supportive dialogue and 4-tier clinical triage.
           </p>
+        </div>
+
+        {/* Ollama Engine Status Pill */}
+        <div className="max-w-xl mx-auto mb-6 p-3 rounded-2xl bg-black/40 border border-white/10 glass-card flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <Cpu className={`w-4 h-4 ${ollamaConnected ? 'text-emerald-400' : 'text-amber-400'}`} />
+            <div>
+              <div className="font-bold text-white flex items-center gap-2">
+                <span>{ollamaConnected ? `Local Ollama Active (${selectedModel})` : 'Offline Embedded Engine Mode'}</span>
+                <span className={`w-2 h-2 rounded-full ${ollamaConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+              </div>
+              <div className="text-[11px] text-neutral-400 font-mono">
+                {ollamaConnected ? 'http://localhost:11434 (Zero Cloud Leakage)' : 'Ollama not detected at localhost:11434'}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {ollamaConnected && availableModels.length > 0 && (
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="bg-black/60 border border-white/15 text-neutral-200 text-xs rounded-xl px-2.5 py-1 focus:outline-none cursor-pointer"
+              >
+                {availableModels.map((m) => (
+                  <option key={m} value={m} className="bg-[#0b0f17] text-white">
+                    {m}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            <button
+              onClick={checkOllamaConnection}
+              className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 transition-all"
+              title="Refresh Ollama connection"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isCheckingOllama ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
 
         {/* Tab / Mode Selector */}
@@ -250,10 +363,12 @@ export default function Demo() {
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-white flex items-center gap-2">
-                    <span>Gemma 4 Live AI Companion</span>
+                    <span>Gemma 4 AI Companion</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
-                  <p className="text-xs text-neutral-400 font-mono">100% Private On-Device Session</p>
+                  <p className="text-xs text-neutral-400 font-mono">
+                    {ollamaConnected ? `Model: ${selectedModel} (Ollama Local)` : '100% Private On-Device Session'}
+                  </p>
                 </div>
               </div>
 
@@ -360,9 +475,11 @@ export default function Demo() {
 
               {/* Typing Indicator */}
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[200px]">
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[250px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
-                  <span className="text-xs font-mono text-neutral-400">Gemma 4 is replying...</span>
+                  <span className="text-xs font-mono text-neutral-400">
+                    {ollamaConnected ? `${selectedModel} is thinking...` : 'Gemma 4 is replying...'}
+                  </span>
                 </div>
               )}
             </div>
@@ -399,7 +516,7 @@ export default function Demo() {
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Gemma 4 INT4 Live</span>
+                <span>{ollamaConnected ? `Ollama (${selectedModel}) Connected` : 'Gemma 4 INT4 Ready'}</span>
               </span>
             </div>
           </div>
