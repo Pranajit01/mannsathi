@@ -134,21 +134,29 @@ export function Navigation() {
                 </button>
               </div>
 
-              {/* Creator Attribution */}
+              {/* Team Attribution */}
               <div className="relative overflow-hidden p-4 rounded-2xl border border-[#ff6b4a]/20 bg-gradient-to-r from-[#ff6b4a]/10 via-amber-500/5 to-transparent mb-6 group">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2 text-[11px] font-medium tracking-wide text-[#ff6b4a]">
                     <UserCheck className="w-3.5 h-3.5" />
-                    <span>Lead Architect & Creator</span>
+                    <span>Project Team</span>
                   </div>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#ff6b4a]/15 text-[#ff6b4a] border border-[#ff6b4a]/20">
                     Verified
                   </span>
                 </div>
                 
-                <div className="font-semibold text-lg text-white mt-1.5 mb-3">Pranajit Das</div>
+                <div className="space-y-1 mb-3">
+                  <div className="flex items-center justify-between text-sm font-semibold text-white">
+                    <span>Pranajit Das</span>
+                    <span className="text-[10px] text-[#ff6b4a] font-mono font-normal">Lead Architect</span>
+                  </div>
+                  <div className="text-xs text-neutral-300 font-medium">Aditya Mishra</div>
+                  <div className="text-xs text-neutral-300 font-medium">Joyeesmita Bishwas</div>
+                  <div className="text-xs text-neutral-300 font-medium">Spandan Das</div>
+                </div>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-1 border-t border-white/10">
                   <a
                     href="https://github.com/Pranajit01"
                     target="_blank"

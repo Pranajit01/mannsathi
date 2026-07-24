@@ -52,17 +52,22 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Lead Innovator & Architect Column */}
+          {/* Project Team Column */}
           <div className="space-y-3">
             <h5 className="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-400 mb-2 flex items-center gap-1">
               <UserCheck className="w-3.5 h-3.5 text-[#ff6b4a]" />
-              <span>LEAD INNOVATOR & MAKER</span>
+              <span>PROJECT TEAM</span>
             </h5>
-            <div className="font-bold text-sm text-white">Pranajit Das</div>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              End-to-end architecture and creation of the Mind Care India platform.
-            </p>
-            <div className="flex flex-col gap-2 text-xs font-mono pt-1">
+            <div className="space-y-1">
+              <div className="font-bold text-sm text-white flex items-center justify-between">
+                <span>Pranajit Das</span>
+                <span className="text-[10px] text-neutral-400 font-mono font-normal">Lead Architect</span>
+              </div>
+              <div className="text-xs text-neutral-300 font-medium">Aditya Mishra</div>
+              <div className="text-xs text-neutral-300 font-medium">Joyeesmita Bishwas</div>
+              <div className="text-xs text-neutral-300 font-medium">Spandan Das</div>
+            </div>
+            <div className="flex flex-col gap-2 text-xs font-mono pt-2">
               <a
                 href="https://github.com/Pranajit01"
                 target="_blank"
@@ -116,7 +121,7 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 font-normal gap-4">
-          <div>© {new Date().getFullYear()} Mind Care India (Mann Saathi). Architected & Created by Pranajit Das.</div>
+          <div>© {new Date().getFullYear()} Mind Care India (Mann Saathi). Created by Pranajit Das, Aditya Mishra, Joyeesmita Bishwas & Spandan Das.</div>
           <div className="flex items-center gap-6 font-mono text-[10px] tracking-widest uppercase">
             <span>Privacy First</span>
             <span>Zero Data Leakage</span>

@@ -8,9 +8,14 @@
 
 ---
 
-## 👨‍💻 Lead Innovator & System Architect
+## 👥 Project Team & Contributors
 
-**Mann Saathi (Mind Care India)** is architected and built end-to-end by **Pranajit Das**.
+**Mann Saathi (Mind Care India)** is architected and developed by:
+
+- 🌟 **Pranajit Das** (Lead Architect & Creator)
+- 🤝 **Aditya Mishra**
+- 🤝 **Joyeesmita Bishwas**
+- 🤝 **Spandan Das**
 
 - 📧 **Email**: [daspranajit973@gmail.com](mailto:daspranajit973@gmail.com)
 - 🐙 **GitHub**: [github.com/Pranajit01/Mind-Care-India](https://github.com/Pranajit01/Mind-Care-India)
@@ -161,4 +166,4 @@ The project is configured for 1-click deployment on **Vercel**:
 
 Distributed under the **Apache 2.0 License**. See `LICENSE` for details.
 
-Architected & Created by **Pranajit Das**. Powered by **Google Gemma Open Models**.
+Created by **Pranajit Das**, **Aditya Mishra**, **Joyeesmita Bishwas**, and **Spandan Das**. Powered by **Google Gemma Open Models**.
