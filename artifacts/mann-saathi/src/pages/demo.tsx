@@ -75,9 +75,9 @@ export default function Demo() {
     try {
       const res = await fetch('http://localhost:11434/api/tags');
       if (res.ok) {
-        const data = await res.json();
         const models: string[] = data.models ? data.models.map((m: any) => m.name) : [];
-        setAvailableModels(models);
+        const fullModels = Array.from(new Set([...models, 'gemma-4-26b-a4b-it (Google ADK)', 'embedded']));
+        setAvailableModels(fullModels);
         setOllamaConnected(true);
         const gemmaModel = models.find((m) => m.includes('gemma4')) || models.find((m) => m.includes('gemma')) || models[0] || 'gemma4:latest';
         setSelectedModel(gemmaModel);
@@ -190,8 +190,37 @@ export default function Demo() {
 
     let replyContent = '';
 
-    // Attempt Live Local Ollama Inference (Gemma 4)
-    if (ollamaConnected && selectedModel !== 'embedded') {
+    // 1. Attempt Google ADK Gemma 4 Endpoint (FastAPI / Google Cloud)
+    if (selectedModel.includes('Google ADK') || selectedModel.includes('26b')) {
+      try {
+        const historyForAdk = liveMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
+
+        const res = await fetch('http://localhost:8000/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'gemma-4-26b-a4b-it',
+            messages: [...historyForAdk, { role: 'user', content: text }],
+            language: selectedLanguage,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.reply) {
+            replyContent = data.reply;
+          }
+        }
+      } catch (err) {
+        console.warn('Google ADK API fetch error:', err);
+      }
+    }
+
+    // 2. Attempt Live Local Ollama Inference (Gemma 4)
+    if (!replyContent && ollamaConnected && selectedModel !== 'embedded') {
       try {
         const historyForOllama = liveMessages.map((m) => ({
           role: m.role,
