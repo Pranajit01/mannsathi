@@ -191,11 +191,18 @@ export default function Demo() {
             messages: [
               {
                 role: 'system',
-                content: 'You are a warm, caring mental health friend for the user. Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user\'s well-being. Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question.',
+                content: 'You are a warm, caring mental health friend for the user. Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user\'s well-being. Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood. Keep your response concise, comforting, and focused (under 3-4 sentences).',
               },
               ...historyForOllama,
               { role: 'user', content: text },
             ],
+            options: {
+              num_predict: 180,
+              num_ctx: 2048,
+              temperature: 0.6,
+              top_k: 20,
+              top_p: 0.8,
+            },
             stream: false,
           }),
         });

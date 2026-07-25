@@ -8,8 +8,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 app = FastAPI(
-    title="Gemma Mental Health Companion API",
-    description="Warm, caring mental health friend AI powered by local Ollama Gemma model"
+    title="Gemma Fast Mental Health Companion API",
+    description="Accelerated, low-latency mental health AI companion powered by local Ollama Gemma model"
 )
 
 # Enable CORS for web frontend
@@ -35,7 +35,8 @@ OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 SYSTEM_INSTRUCTION = (
     "You are a warm, caring mental health friend for the user. "
     "Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user's well-being. "
-    "Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question."
+    "Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood. "
+    "Keep your response concise, comforting, and focused (under 3-4 sentences)."
 )
 
 @app.get("/")
@@ -54,7 +55,7 @@ def health_check():
 
     return {
         "status": "operational",
-        "engine": "Gemma Mental Health Companion (Ollama Powered)",
+        "engine": "Gemma Fast Mental Health Companion (Ollama Accelerated)",
         "ollama_online": ollama_online,
         "available_models": models,
         "default_model": "gemma4b"
@@ -67,7 +68,7 @@ def chat_handler(req: ChatRequest):
 
     model_to_use = req.model or "gemma4b"
 
-    # Forward to local Ollama on Mac with caring mental health friend system instruction
+    # Forward to local Ollama on Mac with speed acceleration options
     try:
         formatted_messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION}
@@ -76,6 +77,13 @@ def chat_handler(req: ChatRequest):
         ollama_payload = json.dumps({
             "model": model_to_use,
             "messages": formatted_messages,
+            "options": {
+                "num_predict": 180,
+                "num_ctx": 2048,
+                "temperature": 0.6,
+                "top_k": 20,
+                "top_p": 0.8
+            },
             "stream": False
         }).encode('utf-8')
 
@@ -85,7 +93,7 @@ def chat_handler(req: ChatRequest):
             headers={"Content-Type": "application/json"}
         )
 
-        with urllib.request.urlopen(ollama_req, timeout=120) as response:
+        with urllib.request.urlopen(ollama_req, timeout=60) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode('utf-8'))
                 reply_text = data.get("message", {}).get("content", "")
@@ -93,17 +101,16 @@ def chat_handler(req: ChatRequest):
                     return {
                         "reply": reply_text,
                         "model": model_to_use,
-                        "engine": "Ollama Gemma Mental Health Companion"
+                        "engine": "Ollama Accelerated Gemma Engine"
                     }
     except Exception as e:
         print(f"Ollama connection notice: {e}")
 
-    # Warm & comforting fallback response
-    last_user_msg = req.messages[-1].content
+    # Low-latency fallback
     return {
-        "reply": f"Hello! I am your mental health friend. I'm right here with you to listen closely and help you with simple, comforting guidance. How can I best support you today?",
+        "reply": "Hello! I am your mental health friend. I'm right here with you to listen closely and help you with simple, comforting guidance. How can I best support you today?",
         "model": model_to_use,
-        "engine": "Gemma Mental Health Companion"
+        "engine": "Gemma Fast Mental Health Companion"
     }
 
 if __name__ == "__main__":
