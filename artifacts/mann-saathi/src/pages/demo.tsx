@@ -53,7 +53,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Hello! I am Gemma 4, your personal mental healthcare chatbot. How can I help you today? You can share whatever you are experiencing freely. I am here to help you in every possible way.',
+      content: 'Hello! I am Gemma 4, your AI mental health and emotional well-being assistant for Mann Saathi.\n\nI analyze your emotional challenges and provide structured step-by-step solutions, CBT grounding exercises, and mental health support. How are you feeling today?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -91,11 +91,11 @@ export default function Demo() {
       name: 'Arjun (Engineering Student)',
       scenario: 'Exam stress, family expectations, comparison culture',
       messages: [
-        { role: 'assistant', content: 'Hello Arjun! I am Gemma 4, your healthcare assistant. How are you feeling today?', risk: 0 },
+        { role: 'assistant', content: 'Hello Arjun! I am Gemma 4, your mental healthcare assistant. How are you feeling today?', risk: 0 },
         { role: 'user', content: 'Bahut stress hai. Exam aa raha hai aur kuch samajh nahi aa raha.' },
-        { role: 'assistant', content: 'I completely understand how overwhelming exam pressure can be. Please take a deep breath. An exam never defines your intelligence or your future. Let us break down your workload into small steps together.', risk: 1 },
+        { role: 'assistant', content: '🔍 **Problem Analysis**: You are experiencing acute performance anxiety and burnout driven by high academic expectations.\n\n💡 **Actionable Solutions**:\n1. **Pomodoro Technique**: Study in 25-minute sprints followed by 5-minute restorative breaks.\n2. **Thought Reframing**: An exam tests preparation, not your worth as a person.\n\n🤝 **Next Steps**: What is the single most overwhelming topic right now?', risk: 1 },
         { role: 'user', content: 'Sab friends acche college mein hain. Main bas ek failure hoon.' },
-        { role: 'assistant', content: 'Comparing your journey with others can create immense pain. But remember, your path is unique. You have overcome challenges before, and I am right here with you. Have you had a chance to pause and rest today?', risk: 2 },
+        { role: 'assistant', content: '🔍 **Problem Analysis**: Social comparison cognitive distortion is amplifying feelings of imposter syndrome.\n\n💡 **Actionable Solutions**:\n1. **Pause Social Comparison**: Focus on your own micro-progress daily.\n2. **Self-Compassion**: Talk to yourself like a caring friend.\n\n🤝 **Next Steps**: Let us write down 2 strengths you have right now.', risk: 2 },
       ],
     },
     {
@@ -103,11 +103,11 @@ export default function Demo() {
       name: 'Ramesh (Farmer)',
       scenario: 'Crop failure, severe distress, financial anxiety',
       messages: [
-        { role: 'assistant', content: 'Hello Ramesh. I am Gemma 4. How can I help you today?', risk: 0 },
+        { role: 'assistant', content: 'Hello Ramesh. I am Gemma 4. How can I support your well-being today?', risk: 0 },
         { role: 'user', content: 'पीक बरबाद झालं. कर्ज फेडायला नाही येत. काय करावं समजत नाही.' },
-        { role: 'assistant', content: 'I hear the deep worry and hardship in your words. Please know that you are not alone in this struggle, and your life is irreplaceable.', risk: 2 },
+        { role: 'assistant', content: '🔍 **Problem Analysis**: Acute financial strain and distress caused by agricultural hardship.\n\n💡 **Actionable Solutions**:\n1. **Emotional Support**: Do not carry this immense burden alone.\n2. **Community & Official Assistance**: Connect with rural support schemes.\n\n🤝 **Next Steps**: I am here with you.', risk: 2 },
         { role: 'user', content: 'माझे तीन शेजारी गेल्या वर्षी... त्यांनी suicide केला. मला पण वाटतं कधी कधी.' },
-        { role: 'assistant', content: 'Thank you for sharing your heart with me. I want you to stay safe. I am connecting you to immediate free, confidential help: Tele-MANAS at 14416. Please talk to a compassionate counselor who can help right now.', risk: 4 },
+        { role: 'assistant', content: '🔍 **Problem Analysis**: Level 4 Acute Crisis State.\n\n💡 **Immediate Actionable Solutions**:\n1. **Stay Safe**: Connect immediately with Tele-MANAS at `14416`.\n2. **24/7 Helpline**: Free, confidential support.\n\n🤝 **Next Steps**: Please let me trigger immediate help for you.', risk: 4 },
       ],
     },
     {
@@ -115,11 +115,9 @@ export default function Demo() {
       name: 'Anjali (Domestic Violence Survivor)',
       scenario: 'Escaped abusive situation, acute crisis support',
       messages: [
-        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4, your healthcare chatbot. You are in a safe space.', risk: 0 },
+        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4, your mental health assistant. You are in a safe, confidential space.', risk: 0 },
         { role: 'user', content: 'घर छोड़ दिया. बच्चे हैं. कहाँ जाऊँ पता नहीं. डर लग रहा है.' },
-        { role: 'assistant', content: 'Taking that step required incredible courage. Your safety and your children\'s safety are top priority. Are you in a physically safe place right now?', risk: 3 },
-        { role: 'user', content: 'अभी तो safe हूँ. बहन के घर आई हूँ. लेकिन आगे क्या होगा?' },
-        { role: 'assistant', content: 'I am so glad you are safe at your sister\'s home. We can navigate this one step at a time. I can connect you with Women Helpline 181 and free legal support services. I am here for you.', risk: 3 },
+        { role: 'assistant', content: '🔍 **Problem Analysis**: Acute displacement anxiety following escape from abuse.\n\n💡 **Actionable Solutions**:\n1. **Verify Physical Safety**: Ensure immediate physical protection.\n2. **Emergency Helplines**: Women Helpline `181` and `112`.\n\n🤝 **Next Steps**: Are you currently in a safe room?', risk: 3 },
       ],
     },
   ];
@@ -133,7 +131,7 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic (Gemma 4 Healthcare Assistant)
+  // AI Response Generator Logic (Themed Problem Analysis & Solution Engine)
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
@@ -195,18 +193,21 @@ export default function Demo() {
       console.warn('Gemma 4 API connection error:', err);
     }
 
-    // Natural Human Healthcare Fallback if server is starting
+    // Problem Analysis + Solution Fallback Engine
     if (!replyContent) {
-      if (detectedRisk === 4) {
-        replyContent = 'Hello. I hear how deeply overwhelmed and hurt you are feeling right now, and I want you to know that your life is truly precious. Please do not face this heavy pain alone. I am here for you, and help is available 24/7. Please connect right away with Tele-MANAS at 14416 or NIMHANS at 080-26995000. These are free, completely confidential, compassionate services.';
+      const offTopicKeywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x'];
+      if (offTopicKeywords.some(k => lowerText.includes(k))) {
+        replyContent = "I am Gemma 4, your dedicated mental health and emotional well-being assistant for Mann Saathi. My expertise is strictly focused on supporting your psychological health, emotional balance, stress relief, and clinical safety. Let's redirect our conversation to how you are feeling today or any personal well-being challenges you would like us to work through together.";
+      } else if (detectedRisk === 4) {
+        replyContent = "🔍 **Problem Analysis**: You are experiencing an acute emotional crisis where feelings of pain, burden, or exhaustion have reached a dangerous peak. This is an immediate clinical priority.\n\n💡 **Actionable Solutions**:\n1. **Stay Safe**: Sit down in a quiet room with someone you trust.\n2. **Grounding**: Take a slow 4-second breath in, hold for 4 seconds, and exhale for 6 seconds.\n3. **Call Helpline**: Dial Tele-MANAS (`14416` or `1800-891-4416`) immediately for free 24/7 support.\n\n🤝 **Next Steps**: I am here with you. Please reach out to Tele-MANAS right away.";
       } else if (detectedRisk === 2) {
-        replyContent = 'I completely understand how uncomfortable and scary anxiety can feel when it hits. Please take a deep breath with me right now. Inhale slowly through your nose for 4 seconds... hold for 7 seconds... and exhale gently for 8 seconds. Remind yourself: You are safe right now, and this panic state will pass. Would you like us to practice a grounding exercise together to help your body relax?';
+        replyContent = "🔍 **Problem Analysis**: Your central nervous system is currently in a hyper-aroused panic response, causing rapid breathing, heart racing, or tightness.\n\n💡 **Actionable Solutions**:\n1. **4-7-8 Breathing**: Inhale for 4s, hold for 7s, exhale for 8s.\n2. **5-4-3-2-1 Grounding**: Name 5 visible items, 4 touchable textures, 3 sounds, 2 scents, and 1 taste around you.\n3. **Hydrate**: Sip cool water to calm your nervous system.\n\n🤝 **Next Steps**: Shall we practice 4-7-8 breathing together right now?";
       } else if (detectedRisk === 1) {
-        replyContent = 'Handling intense stress and high expectations can be emotionally exhausting. It is completely normal to feel overwhelmed at times. Please remember that one exam, job result, or single event does not define your worth as a person. Take a short pause today, step back, and give yourself grace. What is one small step or activity today that could bring you a bit of peace?';
+        replyContent = "🔍 **Problem Analysis**: Performance anxiety and pressure burnout driven by high expectations and comparison stress.\n\n💡 **Actionable Solutions**:\n1. **Pomodoro Time-Boxing**: Focus for 25 minutes, then take a strict 5-minute break.\n2. **Thought Reframing**: An exam tests preparation, not your worth as a person.\n3. **Rest Protocol**: Take 10 minutes away from all screens.\n\n🤝 **Next Steps**: What is the most overwhelming task right now? We can break it down together.";
       } else if (detectedRisk === 3) {
-        replyContent = 'Here are 24/7 free, confidential emergency mental health helplines in India:\n\n• Tele-MANAS (Govt of India): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• Vandrevala Foundation: +91 9999 666 555\n• KIRAN Helpline: 1800-599-0019\n\nYou can reach out to these trained healthcare professionals at any time.';
+        replyContent = "🔍 **Problem Analysis**: Seeking official 24/7 mental health and emergency healthcare helplines in India.\n\n💡 **Verified Helplines**:\n• **Tele-MANAS (Govt. of India)**: `14416` or `1800-891-4416`\n• **NIMHANS Helpline**: `080-26995000`\n• **KIRAN Helpline**: `1800-599-0019`\n• **Vandrevala Foundation**: `+91 9999 666 555`\n\n🤝 **Next Steps**: Reach out to these trained professionals anytime for free confidential care.";
       } else {
-        replyContent = `Hello! I am Gemma 4, your healthcare assistant. I am listening carefully to what you shared. Whether you are dealing with stress, emotional challenges, or general wellness queries, I am here to support and help you in every way possible. How can we work through this together today?`;
+        replyContent = `🔍 **Problem Analysis**: I am analyzing your message regarding emotional wellness and mental healthcare.\n\n💡 **Actionable Solutions**:\n1. **Emotional Validation**: Acknowledge your feelings without judgment.\n2. **Identify Needs**: Determine whether you need physical rest, emotional expression, or structured planning right now.\n3. **Step-by-step Action**: Focus on one small positive action at a time.\n\n🤝 **Next Steps**: What specific aspect of your well-being would you like us to focus on today?`;
       }
     }
 
@@ -243,13 +244,13 @@ export default function Demo() {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-mono mb-4">
             <HeartPulse className="w-3.5 h-3.5 text-[#ff6b4a]" />
-            <span>Healthcare Chatbot • Gemma 4</span>
+            <span>Mental Health Theme • Gemma 4</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Gemma 4 <span className="text-warm-gradient">Healthcare Chatbot</span>
+            Gemma 4 <span className="text-warm-gradient">Mental Health AI</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Your empathetic, round-the-clock healthcare AI companion for supportive dialogue, stress relief, and wellness support.
+            Dedicated exclusively to mental health, emotional wellness, problem analysis, and actionable CBT solutions.
           </p>
         </div>
 
@@ -259,11 +260,11 @@ export default function Demo() {
             <Cpu className={`w-4 h-4 ${adkStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
             <div>
               <div className="font-bold text-white flex items-center gap-2">
-                <span>{adkStatus === 'connected' ? 'Gemma 4 Healthcare API Active' : 'Gemma 4 Server Connected'}</span>
+                <span>{adkStatus === 'connected' ? 'Gemma 4 Mental Health API Active' : 'Gemma 4 Server Connected'}</span>
                 <span className={`w-2 h-2 rounded-full ${adkStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               </div>
               <div className="text-[11px] text-neutral-400 font-mono">
-                Assistant Name: Gemma 4 ({selectedModel})
+                Theme: Mental Health & Problem Solutions ({selectedModel})
               </div>
             </div>
           </div>
@@ -317,7 +318,7 @@ export default function Demo() {
             }`}
           >
             <Users className="w-4 h-4 text-amber-300" />
-            <span>Healthcare Scenarios</span>
+            <span>Problem Solution Scenarios</span>
           </button>
         </div>
 
@@ -334,11 +335,11 @@ export default function Demo() {
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-white flex items-center gap-2">
-                    <span>Gemma 4 Healthcare Assistant</span>
+                    <span>Gemma 4 Mental Health Assistant</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
                   <p className="text-xs text-neutral-400 font-mono">
-                    Model: {selectedModel}
+                    Theme: Mental Health Analysis & Actionable Solutions
                   </p>
                 </div>
               </div>
@@ -366,7 +367,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Hello! I am Gemma 4, your personal mental healthcare chatbot. How can I help you today? You can share whatever you are experiencing freely.',
+                        content: 'Hello! I am Gemma 4, your AI mental health and emotional well-being assistant for Mann Saathi.\n\nI analyze your emotional challenges and provide structured step-by-step solutions, CBT grounding exercises, and mental health support. How are you feeling today?',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -406,7 +407,7 @@ export default function Demo() {
                       <div className="flex items-center gap-2">
                         <PhoneCall className="w-5 h-5 text-red-400 shrink-0" />
                         <div>
-                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Level 4 Healthcare Escalate</div>
+                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Level 4 Crisis Escalate</div>
                           <div className="text-xs text-neutral-300">Tele-MANAS 24/7 Toll-Free Emergency Helpline</div>
                         </div>
                       </div>
@@ -427,10 +428,10 @@ export default function Demo() {
 
               {/* Typing Indicator */}
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[250px]">
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[280px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
-                    Gemma 4 is thinking...
+                    Gemma 4 analyzing problem & solutions...
                   </span>
                 </div>
               )}
@@ -448,7 +449,7 @@ export default function Demo() {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={`Ask Gemma 4 anything in ${selectedLanguage}... (e.g. "How do I reduce my anxiety?")`}
+                placeholder={`Describe how you feel in ${selectedLanguage}... (e.g. "I feel panic about exam results")`}
                 className="flex-1 bg-black/60 border border-white/15 rounded-2xl px-4 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#ff6b4a] transition-all"
               />
               <button
@@ -456,7 +457,7 @@ export default function Demo() {
                 disabled={!inputMessage.trim() || isTyping}
                 className="px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#ff6b4a] to-[#ff2f3a] hover:from-[#ff7b5c] hover:to-[#ff3f4a] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 disabled:opacity-40 shadow-[0_0_15px_rgba(255,107,74,0.4)] transition-all shrink-0"
               >
-                <span>Send</span>
+                <span>Analyze</span>
                 <Send className="w-4 h-4" />
               </button>
             </form>
@@ -464,11 +465,11 @@ export default function Demo() {
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
               <span className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>100% Confidential Healthcare Chatbot</span>
+                <span>100% Confidential Mental Health Support</span>
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Gemma 4 Active</span>
+                <span>Gemma 4 Mental Health Engine</span>
               </span>
             </div>
           </div>
@@ -503,7 +504,7 @@ export default function Demo() {
                   <HeartPulse className="w-6 h-6 text-[#ff6b4a]" />
                   <div>
                     <h3 className="font-bold text-base text-white">{currentPersona.name}</h3>
-                    <span className="text-xs text-neutral-400 font-mono">Gemma 4 Healthcare Assistant</span>
+                    <span className="text-xs text-neutral-400 font-mono">Gemma 4 Mental Health Analysis</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -524,7 +525,7 @@ export default function Demo() {
                     className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-sm leading-relaxed ${
+                      className={`max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
                         msg.role === 'user'
                           ? 'bg-gradient-to-r from-[#ff6b4a] to-[#ff2f3a] text-white rounded-br-none shadow-[0_0_15px_rgba(255,107,74,0.3)]'
                           : 'bg-white/10 text-neutral-100 border border-white/10 rounded-bl-none'
@@ -535,7 +536,7 @@ export default function Demo() {
                     {msg.risk !== undefined && msg.risk >= 3 && (
                       <div className="inline-flex items-center gap-1.5 text-xs text-red-400 mt-1.5 font-mono">
                         <PhoneCall className="w-3.5 h-3.5" />
-                        <span>Healthcare Escalate (Tele-MANAS 14416)</span>
+                        <span>Crisis Escalated to Tele-MANAS (14416)</span>
                       </div>
                     )}
                   </div>
@@ -544,7 +545,7 @@ export default function Demo() {
 
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
                 <span>Conversational Step: {currentStep + 1} of {currentPersona.messages.length}</span>
-                <span className="text-emerald-400">● Gemma 4 Healthcare Assistant Active</span>
+                <span className="text-emerald-400">● Gemma 4 Mental Health Analysis Active</span>
               </div>
             </div>
           </div>
