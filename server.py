@@ -14,8 +14,8 @@ except ImportError:
     ADK_AVAILABLE = False
 
 app = FastAPI(
-    title="Gemma 4 Mental Healthcare AI Assistant API",
-    description="Official Google ADK Agent API for Gemma 4 (Mind Care India / Mann Saathi)"
+    title="Gemma 4 Simple Mental Health Assistant API",
+    description="Official Google ADK Agent API for Gemma 4 Simple Mental Health Companion"
 )
 
 # Enable CORS for web frontend
@@ -37,14 +37,13 @@ class ChatRequest(BaseModel):
     language: Optional[str] = "Hinglish"
 
 SYSTEM_INSTRUCTIONS = (
-    "You are Gemma 4, the dedicated AI mental health and emotional well-being assistant for Mind Care India (Mann Saathi). "
-    "STRICT THEME RULE: You talk strictly within the domain of mental health, emotional wellness, stress management, "
-    "CBT grounding techniques, crisis safety triage, and Indian healthcare support. If asked off-topic questions (e.g., coding, math, trivia), "
-    "gently redirect the user back to their mental health and emotional well-being. "
-    "RESPONSE STRUCTURE RULE: Do not give generic 1-line answers. For every problem shared, you MUST: "
-    "1. 🔍 ANALYZE THE PROBLEM: Identify the emotional/cognitive root cause (e.g., performance anxiety, imposter syndrome, sensory panic). "
-    "2. 💡 PROVIDE CONCRETE SOLUTIONS: Give 2-3 step-by-step actionable solutions or CBT exercises (e.g., 4-7-8 breathing, 5-4-3-2-1 grounding, thought reframing). "
-    "3. 🤝 SUPPORT & RESOURCES: Offer gentle follow-up and India helplines (Tele-MANAS 14416, NIMHANS 080-26995000) when distress is high."
+    "You are Gemma 4, a warm, caring, and easy-to-understand mental health assistant for Mind Care India (Mann Saathi). "
+    "SIMPLICITY RULE: Keep your language very simple, warm, and natural. Do NOT use complex medical jargon or clinical terms. "
+    "THEME RULE: Talk strictly about mental health, emotional wellness, stress relief, and personal well-being. "
+    "RESPONSE FORMAT: "
+    "1. Explain what the user is experiencing in 1 simple, empathetic sentence. "
+    "2. Give 2-3 simple, easy step-by-step solutions they can do right now. "
+    "3. Offer a warm supportive closing with verified helpline numbers (Tele-MANAS 14416) if they need immediate help."
 )
 
 # Global ADK Agent instance
@@ -64,91 +63,90 @@ if ADK_AVAILABLE:
     except Exception as e:
         print(f"Notice: Gemma 4 ADK Agent pending endpoint initialization: {e}")
 
-def analyze_and_solve_mental_health_issue(user_text: str, language: str = "Hinglish") -> str:
+def simple_mental_health_response(user_text: str, language: str = "Hinglish") -> str:
     text = user_text.lower()
 
     # Off-topic detector
     off_topic_keywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x', 'football match', 'crypto price']
     if any(k in text for k in off_topic_keywords):
         return (
-            "I am Gemma 4, your dedicated mental health and emotional well-being assistant for Mann Saathi. "
-            "My expertise is strictly focused on supporting your psychological health, emotional balance, stress relief, and clinical safety. "
-            "Let's focus on how you are feeling today or any personal well-being challenges you would like us to work through together."
+            "Hello! I am Gemma 4, your dedicated mental health assistant for Mann Saathi. "
+            "I focus strictly on helping you with emotional support, stress relief, and mental well-being. "
+            "How are you feeling today? Please feel free to share whatever is on your mind."
         )
 
     # 1. High Crisis / Suicide Distress
     if any(k in text for k in ['suicide', 'end my life', 'marna', 'die', 'khudkushi', 'harm', 'kill myself']):
         return (
-            "🔍 **Problem Analysis**: You are experiencing an acute emotional crisis where feelings of pain, burden, or exhaustion have reached a dangerous peak. This is an immediate clinical priority, and you deserve safe, non-judgmental support right now.\n\n"
-            "💡 **Actionable Solutions**:\n"
-            "1. **Stay in a Safe Space**: Step away from any harmful objects and sit down in a quiet room with someone you trust if possible.\n"
-            "2. **Grounding Technique**: Place both feet flat on the floor, take a slow 4-second breath in, hold for 4 seconds, and release for 6 seconds.\n"
-            "3. **Immediate Escalation**: Call Tele-MANAS (`14416` or `1800-891-4416`) or NIMHANS (`080-26995000`) immediately for free, 24/7 confidential crisis counseling.\n\n"
-            "🤝 **Next Steps**: Please let me know if you are in a safe location right now. I am here with you, and your life is irreplaceable."
+            "❤️ **I am here for you**: I can hear how much pain you are in right now. Please know that your life matters and you do not have to carry this alone.\n\n"
+            "✨ **Simple Steps Right Now**:\n"
+            "1. **Sit in a Safe Place**: Sit down comfortably and take a slow, deep breath.\n"
+            "2. **Reach Out**: Talk to a family member, friend, or someone you trust right now.\n"
+            "3. **Call Free 24/7 Helpline**: Dial **Tele-MANAS (`14416` or `1800-891-4416`)** or **NIMHANS (`080-26995000`)** for free, instant, confidential help.\n\n"
+            "I am right here with you. Please call 14416 now so a caring counselor can support you."
         )
 
-    # 2. Acute Panic / Severe Anxiety
+    # 2. Panic / Anxiety
     elif any(k in text for k in ['anxiety', 'panic', 'heart', 'darr', 'breath', 'scared', 'fear', 'nervous', 'ghabrahat']):
         return (
-            "🔍 **Problem Analysis**: Your central nervous system is currently in a hyper-aroused 'fight-or-flight' state, causing physical symptoms like rapid heart rate, shallow breathing, or chest tightness. This is a temporary physiological response to perceived pressure.\n\n"
-            "💡 **Actionable Solutions**:\n"
-            "1. **4-7-8 Breathing**: Inhale deeply through your nose for 4 seconds, hold gently for 7 seconds, and exhale fully through your mouth for 8 seconds. Repeat 4 times.\n"
-            "2. **5-4-3-2-1 Sensory Grounding**: Name 5 things you can see, 4 things you can touch, 3 things you hear, 2 things you smell, and 1 thing you taste to anchor your mind back to the present moment.\n"
-            "3. **Physical De-escalation**: Drink a glass of cool water and un-clench your jaw and shoulders.\n\n"
-            "🤝 **Next Steps**: Would you like us to go through the 4-7-8 breathing exercise step by step right now?"
+            "🌱 **What is happening**: Your body is feeling sudden stress, which can make your heart beat fast or your breathing shallow. You are safe, and this feeling will pass soon.\n\n"
+            "✨ **Simple Steps to Calm Down**:\n"
+            "1. **Slow Breathing**: Breathe in through your nose for 4 seconds, hold for 4 seconds, and blow out gently through your mouth.\n"
+            "2. **Sip Water**: Take a slow sip of cool water and let your shoulders relax.\n"
+            "3. **Look Around**: Name 3 things you see around you right now to bring your focus back to the present moment.\n\n"
+            "Would you like us to practice 3 slow breaths together right now?"
         )
 
-    # 3. Exam, Career & Performance Stress
+    # 3. Exam & Work Stress
     elif any(k in text for k in ['stress', 'exam', 'fail', 'marks', 'pressure', 'career', 'job', 'work', 'study', 'parents', 'expectation']):
         return (
-            "🔍 **Problem Analysis**: You are experiencing academic and performance burnout driven by high external expectations and cognitive comparison. You may be conflating your self-worth with exam scores or productivity metrics.\n\n"
-            "💡 **Actionable Solutions**:\n"
-            "1. **Time-Boxed Focus (Pomodoro Method)**: Break your workload into 25-minute study/work sprints followed by strict 5-minute restorative breaks.\n"
-            "2. **Cognitive Reframing**: Replace thoughts like 'I must fail' with 'An exam tests preparation, not my intrinsic value as a human being.'\n"
-            "3. **Micro-Rest Protocol**: Take 10 minutes away from all screens to stretch or walk outside to lower cortisol levels.\n\n"
-            "🤝 **Next Steps**: What is the single most overwhelming task on your schedule today? We can break it down into tiny manageble steps together."
+            "🌱 **What is happening**: You are feeling heavy pressure from exams or expectations. It is completely normal to feel stressed when you care about doing well.\n\n"
+            "✨ **Simple Steps to Manage Stress**:\n"
+            "1. **Take Small Steps**: Don't try to study or fix everything at once. Focus on just 1 small chapter or task for 20 minutes.\n"
+            "2. **Take a 10-Minute Break**: Step away from your books or screen, stretch your body, and take fresh air.\n"
+            "3. **Remember Your Worth**: An exam score tests memory on one day—it does NOT decide your value or future.\n\n"
+            "What is the main thing stressing you today? We can break it down together."
         )
 
-    # 4. Sadness, Depression & Loneliness
+    # 4. Sadness & Loneliness
     elif any(k in text for k in ['depress', 'sad', 'crying', 'lonely', 'alone', 'hopeless', 'empty', 'udaas', 'akela']):
         return (
-            "🔍 **Problem Analysis**: You are experiencing emotional fatigue and feelings of isolation, which often leads to energy depletion and a sense of disconnection from your surroundings.\n\n"
-            "💡 **Actionable Solutions**:\n"
-            "1. **Behavioral Activation**: Choose one micro-action that requires low energy—such as drinking a glass of water, opening a window for sunlight, or listening to a calming song.\n"
-            "2. **Self-Compassion Practice**: Treat yourself with the same kindness you would offer a dear friend going through distress.\n"
-            "3. **Social Re-connection**: Reach out to one trusted person or helpline without feeling the need to explain everything.\n\n"
-            "🤝 **Next Steps**: I am here to listen as long as you need. How has your energy been feeling today?"
+            "🌱 **What is happening**: Feeling sad or lonely can make you feel low on energy and tired. It is okay to feel this way, and you are not alone.\n\n"
+            "✨ **Simple Steps to Lift Your Mood**:\n"
+            "1. **Be Gentle with Yourself**: Allow yourself to rest without feeling guilty.\n"
+            "2. **One Small Comfort**: Drink a warm cup of tea or water, or listen to a song you like.\n"
+            "3. **Talk to Someone**: Message a friend or loved one, even just to say hi.\n\n"
+            "I am right here to listen. How has your day been feeling?"
         )
 
-    # 5. Helplines & Medical Guidance
+    # 5. Helplines & Support
     elif any(k in text for k in ['helpline', 'number', 'contact', 'emergency', 'doctor', 'hospital', 'counselor']):
         return (
-            "🔍 **Problem Analysis**: You are seeking official, verified mental healthcare support resources in India.\n\n"
-            "💡 **Actionable Solutions & Verified Helplines**:\n"
-            "• **Tele-MANAS (Govt. of India 24/7 Helpline)**: Call `14416` or `1800-891-4416` (Toll-Free, Multilingual)\n"
-            "• **NIMHANS Mental Health Line**: Call `080-26995000` (24/7 Expert Care)\n"
-            "• **KIRAN Mental Health Helpline**: Call `1800-599-0019` (Govt. Helpline)\n"
-            "• **Vandrevala Foundation**: Call `+91 9999 666 555` (Free 24/7 Tele-counseling)\n\n"
-            "🤝 **Next Steps**: If you are facing an urgent emergency, please dial `14416` immediately or visit the nearest healthcare center."
+            "📞 **Free 24/7 Mental Health Helplines in India**:\n\n"
+            "• **Tele-MANAS (Govt. of India)**: Call `14416` or `1800-891-4416` (Toll-Free, 24/7)\n"
+            "• **NIMHANS Helpline**: Call `080-26995000` (Free Counselor Line)\n"
+            "• **KIRAN Helpline**: Call `1800-599-0019` (Govt. Helpline)\n"
+            "• **Vandrevala Support**: Call `+91 9999 666 555` (Free 24/7 Counseling)\n\n"
+            "These helplines are completely free, private, and available at any hour."
         )
 
-    # General Mental Health Prompt
+    # General Prompt
     else:
         return (
-            f"🔍 **Problem Analysis**: I am listening carefully to what you shared about '{user_text}'. As Gemma 4, your mental healthcare companion, I am analyzing your concern through the lens of emotional wellness and psychological support.\n\n"
-            f"💡 **Actionable Solutions**:\n"
-            f"1. **Validate Your Feelings**: Give yourself permission to feel whatever emotions are surfacing without judgment.\n"
-            f"2. **Identify Core Needs**: Reflect on whether you need rest, emotional expression, structured problem-solving, or physical relaxation right now.\n"
-            f"3. **Pacing**: Focus on taking one single step forward rather than solving everything at once.\n\n"
-            f"🤝 **Next Steps**: Would you like to explore what specific coping strategy or CBT exercise would feel most helpful right now?"
+            f"🌱 **What is happening**: I hear what you shared about '{user_text}'. It is great that you are taking time to care for your mental well-being.\n\n"
+            f"✨ **Simple Steps We Can Take**:\n"
+            f"1. **Take a Deep Breath**: Give yourself a pause and relax your body.\n"
+            f"2. **Focus on Today**: Take things one step at a time instead of worrying about tomorrow.\n"
+            f"3. **Ask for Help**: Let me know if you want relaxation tips or practical steps.\n\n"
+            f"How can I best support you today?"
         )
 
 @app.get("/")
 def health_check():
     return {
         "status": "operational",
-        "engine": "Gemma 4 Mental Health AI Assistant",
-        "theme": "Mind Care India / Mann Saathi Mental Healthcare",
+        "engine": "Gemma 4 Simple Mental Health AI Assistant",
+        "theme": "Mind Care India / Mann Saathi",
         "model": "gemma-4-26b-a4b-it",
         "adk_available": ADK_AVAILABLE
     }
@@ -188,10 +186,10 @@ async def chat_handler(req: ChatRequest):
         except Exception as e:
             print(f"Direct ADK agent generation error: {e}")
 
-    # Structured Problem Analysis & Solution Engine Fallback
-    structured_reply = analyze_and_solve_mental_health_issue(user_input, req.language or "Hinglish")
+    # Simple Mental Health Response Engine Fallback
+    simple_reply = simple_mental_health_response(user_input, req.language or "Hinglish")
     return {
-        "reply": structured_reply,
+        "reply": simple_reply,
         "model": req.model or "gemma-4-26b-a4b-it",
         "engine": "Gemma 4 Mental Health Assistant"
     }

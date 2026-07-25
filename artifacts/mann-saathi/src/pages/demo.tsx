@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
   Send, 
-  Sparkles, 
   Brain, 
   Shield, 
   PhoneCall, 
@@ -53,7 +52,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Hello! I am Gemma 4, your AI mental health and emotional well-being assistant for Mann Saathi.\n\nI analyze your emotional challenges and provide structured step-by-step solutions, CBT grounding exercises, and mental health support. How are you feeling today?',
+      content: 'Hello! I am Gemma 4, your personal mental health assistant.\n\nI am here to listen, help you understand what you are feeling, and give you simple, easy steps to feel better. How are you feeling today?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -89,35 +88,35 @@ export default function Demo() {
     {
       id: 'arjun',
       name: 'Arjun (Engineering Student)',
-      scenario: 'Exam stress, family expectations, comparison culture',
+      scenario: 'Exam stress, family expectations',
       messages: [
-        { role: 'assistant', content: 'Hello Arjun! I am Gemma 4, your mental healthcare assistant. How are you feeling today?', risk: 0 },
+        { role: 'assistant', content: 'Hello Arjun! I am Gemma 4. How are you feeling today?', risk: 0 },
         { role: 'user', content: 'Bahut stress hai. Exam aa raha hai aur kuch samajh nahi aa raha.' },
-        { role: 'assistant', content: '🔍 **Problem Analysis**: You are experiencing acute performance anxiety and burnout driven by high academic expectations.\n\n💡 **Actionable Solutions**:\n1. **Pomodoro Technique**: Study in 25-minute sprints followed by 5-minute restorative breaks.\n2. **Thought Reframing**: An exam tests preparation, not your worth as a person.\n\n🤝 **Next Steps**: What is the single most overwhelming topic right now?', risk: 1 },
+        { role: 'assistant', content: '🌱 **What is happening**: You are feeling heavy pressure from upcoming exams. It is completely normal to feel stressed when you want to do well.\n\n✨ **Simple Steps**:\n1. Focus on just 1 small topic for 20 minutes.\n2. Take a 10-minute break to breathe fresh air.\n3. An exam does not decide your value as a person.', risk: 1 },
         { role: 'user', content: 'Sab friends acche college mein hain. Main bas ek failure hoon.' },
-        { role: 'assistant', content: '🔍 **Problem Analysis**: Social comparison cognitive distortion is amplifying feelings of imposter syndrome.\n\n💡 **Actionable Solutions**:\n1. **Pause Social Comparison**: Focus on your own micro-progress daily.\n2. **Self-Compassion**: Talk to yourself like a caring friend.\n\n🤝 **Next Steps**: Let us write down 2 strengths you have right now.', risk: 2 },
+        { role: 'assistant', content: '🌱 **What is happening**: Comparing yourself to others can make you feel down. Everyone has their own unique timeline.\n\n✨ **Simple Steps**:\n1. Stop comparing your journey to others.\n2. Focus on 1 small win today.\n3. Be kind to yourself.', risk: 2 },
       ],
     },
     {
       id: 'ramesh',
       name: 'Ramesh (Farmer)',
-      scenario: 'Crop failure, severe distress, financial anxiety',
+      scenario: 'Crop failure, financial stress',
       messages: [
-        { role: 'assistant', content: 'Hello Ramesh. I am Gemma 4. How can I support your well-being today?', risk: 0 },
+        { role: 'assistant', content: 'Hello Ramesh. I am Gemma 4. How can I support you today?', risk: 0 },
         { role: 'user', content: 'पीक बरबाद झालं. कर्ज फेडायला नाही येत. काय करावं समजत नाही.' },
-        { role: 'assistant', content: '🔍 **Problem Analysis**: Acute financial strain and distress caused by agricultural hardship.\n\n💡 **Actionable Solutions**:\n1. **Emotional Support**: Do not carry this immense burden alone.\n2. **Community & Official Assistance**: Connect with rural support schemes.\n\n🤝 **Next Steps**: I am here with you.', risk: 2 },
+        { role: 'assistant', content: '🌱 **What is happening**: You are carrying a heavy worry about crops and loans. You are not alone in this.\n\n✨ **Simple Steps**:\n1. Do not carry this burden alone.\n2. Talk to a trusted family member or counselor.', risk: 2 },
         { role: 'user', content: 'माझे तीन शेजारी गेल्या वर्षी... त्यांनी suicide केला. मला पण वाटतं कधी कधी.' },
-        { role: 'assistant', content: '🔍 **Problem Analysis**: Level 4 Acute Crisis State.\n\n💡 **Immediate Actionable Solutions**:\n1. **Stay Safe**: Connect immediately with Tele-MANAS at `14416`.\n2. **24/7 Helpline**: Free, confidential support.\n\n🤝 **Next Steps**: Please let me trigger immediate help for you.', risk: 4 },
+        { role: 'assistant', content: '❤️ **I am here for you**: Your life matters so much. Please talk right now with Tele-MANAS at `14416` (Free 24/7 helpline). You are not alone.', risk: 4 },
       ],
     },
     {
       id: 'anjali',
       name: 'Anjali (Domestic Violence Survivor)',
-      scenario: 'Escaped abusive situation, acute crisis support',
+      scenario: 'Escaped abusive situation, safety support',
       messages: [
-        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4, your mental health assistant. You are in a safe, confidential space.', risk: 0 },
+        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4. You are in a safe, private space.', risk: 0 },
         { role: 'user', content: 'घर छोड़ दिया. बच्चे हैं. कहाँ जाऊँ पता नहीं. डर लग रहा है.' },
-        { role: 'assistant', content: '🔍 **Problem Analysis**: Acute displacement anxiety following escape from abuse.\n\n💡 **Actionable Solutions**:\n1. **Verify Physical Safety**: Ensure immediate physical protection.\n2. **Emergency Helplines**: Women Helpline `181` and `112`.\n\n🤝 **Next Steps**: Are you currently in a safe room?', risk: 3 },
+        { role: 'assistant', content: '🌱 **What is happening**: You took a very brave step for your safety and your children.\n\n✨ **Simple Steps**:\n1. Stay in a safe physical location.\n2. Call Women Helpline `181` for instant support.\n3. Take one step at a time.', risk: 3 },
       ],
     },
   ];
@@ -131,7 +130,7 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic (Themed Problem Analysis & Solution Engine)
+  // AI Response Generator Logic (Simple, Warm & Helpful Engine)
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
@@ -193,21 +192,21 @@ export default function Demo() {
       console.warn('Gemma 4 API connection error:', err);
     }
 
-    // Problem Analysis + Solution Fallback Engine
+    // Simple & Clear Fallback Engine
     if (!replyContent) {
       const offTopicKeywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x'];
       if (offTopicKeywords.some(k => lowerText.includes(k))) {
-        replyContent = "I am Gemma 4, your dedicated mental health and emotional well-being assistant for Mann Saathi. My expertise is strictly focused on supporting your psychological health, emotional balance, stress relief, and clinical safety. Let's redirect our conversation to how you are feeling today or any personal well-being challenges you would like us to work through together.";
+        replyContent = "Hello! I am Gemma 4, your mental health assistant for Mann Saathi. I focus strictly on helping you with emotional support, stress relief, and personal well-being. How are you feeling today? Feel free to share what is on your mind.";
       } else if (detectedRisk === 4) {
-        replyContent = "🔍 **Problem Analysis**: You are experiencing an acute emotional crisis where feelings of pain, burden, or exhaustion have reached a dangerous peak. This is an immediate clinical priority.\n\n💡 **Actionable Solutions**:\n1. **Stay Safe**: Sit down in a quiet room with someone you trust.\n2. **Grounding**: Take a slow 4-second breath in, hold for 4 seconds, and exhale for 6 seconds.\n3. **Call Helpline**: Dial Tele-MANAS (`14416` or `1800-891-4416`) immediately for free 24/7 support.\n\n🤝 **Next Steps**: I am here with you. Please reach out to Tele-MANAS right away.";
+        replyContent = "❤️ **I am here for you**: I hear how deeply hurt you feel right now. Please know that your life matters and you do not have to carry this alone.\n\n✨ **Simple Steps**:\n1. Sit down comfortably in a safe place.\n2. Talk to a trusted family member or friend right now.\n3. Call **Tele-MANAS (`14416` or `1800-891-4416`)** for free 24/7 helpline care.";
       } else if (detectedRisk === 2) {
-        replyContent = "🔍 **Problem Analysis**: Your central nervous system is currently in a hyper-aroused panic response, causing rapid breathing, heart racing, or tightness.\n\n💡 **Actionable Solutions**:\n1. **4-7-8 Breathing**: Inhale for 4s, hold for 7s, exhale for 8s.\n2. **5-4-3-2-1 Grounding**: Name 5 visible items, 4 touchable textures, 3 sounds, 2 scents, and 1 taste around you.\n3. **Hydrate**: Sip cool water to calm your nervous system.\n\n🤝 **Next Steps**: Shall we practice 4-7-8 breathing together right now?";
+        replyContent = "🌱 **What is happening**: Your body is feeling sudden stress, causing a fast heart rate or tight feeling. You are safe, and this will pass.\n\n✨ **Simple Steps**:\n1. **Slow Breathing**: Breathe in for 4 seconds, hold for 4 seconds, exhale for 4 seconds.\n2. **Sip Cool Water**: Drink a few sips and relax your shoulders.\n3. **Look Around**: Name 3 things you can see right now.";
       } else if (detectedRisk === 1) {
-        replyContent = "🔍 **Problem Analysis**: Performance anxiety and pressure burnout driven by high expectations and comparison stress.\n\n💡 **Actionable Solutions**:\n1. **Pomodoro Time-Boxing**: Focus for 25 minutes, then take a strict 5-minute break.\n2. **Thought Reframing**: An exam tests preparation, not your worth as a person.\n3. **Rest Protocol**: Take 10 minutes away from all screens.\n\n🤝 **Next Steps**: What is the most overwhelming task right now? We can break it down together.";
+        replyContent = "🌱 **What is happening**: You are feeling heavy stress from exams or expectations. It is completely normal to feel overwhelmed at times.\n\n✨ **Simple Steps**:\n1. **Focus Small**: Study for just 20 minutes, then rest.\n2. **Take a Break**: Step away from screens for 10 minutes.\n3. **Remember Your Worth**: An exam does NOT decide your value or future.";
       } else if (detectedRisk === 3) {
-        replyContent = "🔍 **Problem Analysis**: Seeking official 24/7 mental health and emergency healthcare helplines in India.\n\n💡 **Verified Helplines**:\n• **Tele-MANAS (Govt. of India)**: `14416` or `1800-891-4416`\n• **NIMHANS Helpline**: `080-26995000`\n• **KIRAN Helpline**: `1800-599-0019`\n• **Vandrevala Foundation**: `+91 9999 666 555`\n\n🤝 **Next Steps**: Reach out to these trained professionals anytime for free confidential care.";
+        replyContent = "📞 **Free 24/7 Mental Health Helplines in India**:\n\n• **Tele-MANAS**: Call `14416` or `1800-891-4416`\n• **NIMHANS Helpline**: Call `080-26995000`\n• **KIRAN Helpline**: Call `1800-599-0019`\n• **Vandrevala Foundation**: Call `+91 9999 666 555`\n\nThese helplines are 100% free, private, and available anytime.";
       } else {
-        replyContent = `🔍 **Problem Analysis**: I am analyzing your message regarding emotional wellness and mental healthcare.\n\n💡 **Actionable Solutions**:\n1. **Emotional Validation**: Acknowledge your feelings without judgment.\n2. **Identify Needs**: Determine whether you need physical rest, emotional expression, or structured planning right now.\n3. **Step-by-step Action**: Focus on one small positive action at a time.\n\n🤝 **Next Steps**: What specific aspect of your well-being would you like us to focus on today?`;
+        replyContent = `🌱 **What is happening**: I am listening to what you shared about '${text}'. Caring for your mental health is very important.\n\n✨ **Simple Steps**:\n1. Take a slow deep breath.\n2. Focus on one small step at a time.\n3. Let me know if you need simple relaxation tips.\n\nHow can I best help you right now?`;
       }
     }
 
@@ -244,13 +243,13 @@ export default function Demo() {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-mono mb-4">
             <HeartPulse className="w-3.5 h-3.5 text-[#ff6b4a]" />
-            <span>Mental Health Theme • Gemma 4</span>
+            <span>Mental Health Assistant • Gemma 4</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Gemma 4 <span className="text-warm-gradient">Mental Health AI</span>
+            Gemma 4 <span className="text-warm-gradient">Mental Health Assistant</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Dedicated exclusively to mental health, emotional wellness, problem analysis, and actionable CBT solutions.
+            Simple, warm, and easy-to-understand support for your emotional well-being and stress relief.
           </p>
         </div>
 
@@ -260,11 +259,11 @@ export default function Demo() {
             <Cpu className={`w-4 h-4 ${adkStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
             <div>
               <div className="font-bold text-white flex items-center gap-2">
-                <span>{adkStatus === 'connected' ? 'Gemma 4 Mental Health API Active' : 'Gemma 4 Server Connected'}</span>
+                <span>{adkStatus === 'connected' ? 'Gemma 4 API Connected' : 'Gemma 4 Server Active'}</span>
                 <span className={`w-2 h-2 rounded-full ${adkStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               </div>
               <div className="text-[11px] text-neutral-400 font-mono">
-                Theme: Mental Health & Problem Solutions ({selectedModel})
+                Assistant: Gemma 4 ({selectedModel})
               </div>
             </div>
           </div>
@@ -289,7 +288,7 @@ export default function Demo() {
             <button
               onClick={checkAdkConnection}
               className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 transition-all"
-              title="Refresh Gemma 4 Server Status"
+              title="Refresh Status"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${adkStatus === 'checking' ? 'animate-spin' : ''}`} />
             </button>
@@ -318,7 +317,7 @@ export default function Demo() {
             }`}
           >
             <Users className="w-4 h-4 text-amber-300" />
-            <span>Problem Solution Scenarios</span>
+            <span>Simple Guided Scenarios</span>
           </button>
         </div>
 
@@ -339,7 +338,7 @@ export default function Demo() {
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
                   <p className="text-xs text-neutral-400 font-mono">
-                    Theme: Mental Health Analysis & Actionable Solutions
+                    Simple & Easy Emotional Well-being Support
                   </p>
                 </div>
               </div>
@@ -367,7 +366,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Hello! I am Gemma 4, your AI mental health and emotional well-being assistant for Mann Saathi.\n\nI analyze your emotional challenges and provide structured step-by-step solutions, CBT grounding exercises, and mental health support. How are you feeling today?',
+                        content: 'Hello! I am Gemma 4, your personal mental health assistant.\n\nI am here to listen, help you understand what you are feeling, and give you simple, easy steps to feel better. How are you feeling today?',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -407,8 +406,8 @@ export default function Demo() {
                       <div className="flex items-center gap-2">
                         <PhoneCall className="w-5 h-5 text-red-400 shrink-0" />
                         <div>
-                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Level 4 Crisis Escalate</div>
-                          <div className="text-xs text-neutral-300">Tele-MANAS 24/7 Toll-Free Emergency Helpline</div>
+                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Free 24/7 Helpline Active</div>
+                          <div className="text-xs text-neutral-300">Tele-MANAS Toll-Free Emergency Helpline</div>
                         </div>
                       </div>
                       <a
@@ -428,10 +427,10 @@ export default function Demo() {
 
               {/* Typing Indicator */}
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[280px]">
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[260px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
-                    Gemma 4 analyzing problem & solutions...
+                    Gemma 4 is thinking...
                   </span>
                 </div>
               )}
@@ -449,7 +448,7 @@ export default function Demo() {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={`Describe how you feel in ${selectedLanguage}... (e.g. "I feel panic about exam results")`}
+                placeholder={`Talk to Gemma 4 in ${selectedLanguage}... (e.g. "I am feeling very stressed about my exams")`}
                 className="flex-1 bg-black/60 border border-white/15 rounded-2xl px-4 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#ff6b4a] transition-all"
               />
               <button
@@ -457,7 +456,7 @@ export default function Demo() {
                 disabled={!inputMessage.trim() || isTyping}
                 className="px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#ff6b4a] to-[#ff2f3a] hover:from-[#ff7b5c] hover:to-[#ff3f4a] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 disabled:opacity-40 shadow-[0_0_15px_rgba(255,107,74,0.4)] transition-all shrink-0"
               >
-                <span>Analyze</span>
+                <span>Send</span>
                 <Send className="w-4 h-4" />
               </button>
             </form>
@@ -465,11 +464,11 @@ export default function Demo() {
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
               <span className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>100% Confidential Mental Health Support</span>
+                <span>100% Confidential Support</span>
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Gemma 4 Mental Health Engine</span>
+                <span>Gemma 4 Active</span>
               </span>
             </div>
           </div>
@@ -504,7 +503,7 @@ export default function Demo() {
                   <HeartPulse className="w-6 h-6 text-[#ff6b4a]" />
                   <div>
                     <h3 className="font-bold text-base text-white">{currentPersona.name}</h3>
-                    <span className="text-xs text-neutral-400 font-mono">Gemma 4 Mental Health Analysis</span>
+                    <span className="text-xs text-neutral-400 font-mono">Gemma 4 Mental Health Support</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -536,7 +535,7 @@ export default function Demo() {
                     {msg.risk !== undefined && msg.risk >= 3 && (
                       <div className="inline-flex items-center gap-1.5 text-xs text-red-400 mt-1.5 font-mono">
                         <PhoneCall className="w-3.5 h-3.5" />
-                        <span>Crisis Escalated to Tele-MANAS (14416)</span>
+                        <span>Helpline Active (Tele-MANAS 14416)</span>
                       </div>
                     )}
                   </div>
@@ -545,7 +544,7 @@ export default function Demo() {
 
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
                 <span>Conversational Step: {currentStep + 1} of {currentPersona.messages.length}</span>
-                <span className="text-emerald-400">● Gemma 4 Mental Health Analysis Active</span>
+                <span className="text-emerald-400">● Gemma 4 Ready</span>
               </div>
             </div>
           </div>
