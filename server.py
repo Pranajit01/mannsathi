@@ -8,8 +8,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 app = FastAPI(
-    title="Gemma Fast Mental Health Companion API",
-    description="Accelerated, low-latency mental health AI companion powered by local Ollama Gemma model"
+    title="Gemma Mental Health Companion API",
+    description="Warm, caring mental health friend AI powered by local Mac Ollama Gemma models"
 )
 
 # Enable CORS for web frontend
@@ -27,7 +27,7 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: List[ChatMessage]
-    model: Optional[str] = "gemma4b"
+    model: Optional[str] = "gemma4:latest"
     language: Optional[str] = "English"
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
@@ -35,30 +35,51 @@ OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 SYSTEM_INSTRUCTION = (
     "You are a warm, caring mental health friend for the user. "
     "Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user's well-being. "
-    "Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood. "
-    "Keep your response concise, comforting, and focused (under 3-4 sentences)."
+    "Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question."
 )
 
-@app.get("/")
-def health_check():
-    ollama_online = False
-    models = []
+def get_installed_ollama_models() -> List[str]:
     try:
         req = urllib.request.Request(f"{OLLAMA_HOST}/api/tags")
         with urllib.request.urlopen(req, timeout=3) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode('utf-8'))
-                models = [m.get("name") for m in data.get("models", [])]
-                ollama_online = True
+                return [m.get("name") for m in data.get("models", [])]
     except Exception:
-        ollama_online = False
+        pass
+    return []
+
+def resolve_best_model_name(requested_model: str, installed_models: List[str]) -> str:
+    if not installed_models:
+        return requested_model or "gemma4:latest"
+    
+    # Direct match
+    if requested_model in installed_models:
+        return requested_model
+    
+    # Match gemma models
+    req_lower = (requested_model or "").lower()
+    for model in installed_models:
+        if "gemma4:latest" in model.lower() or "gemma4" in model.lower():
+            return model
+    for model in installed_models:
+        if "gemma" in model.lower():
+            return model
+            
+    return installed_models[0]
+
+@app.get("/")
+def health_check():
+    installed = get_installed_ollama_models()
+    ollama_online = len(installed) > 0
+    default_model = resolve_best_model_name("gemma4:latest", installed)
 
     return {
         "status": "operational",
-        "engine": "Gemma Fast Mental Health Companion (Ollama Accelerated)",
+        "engine": "Gemma Mental Health Companion (Ollama Mac)",
         "ollama_online": ollama_online,
-        "available_models": models,
-        "default_model": "gemma4b"
+        "available_models": installed,
+        "active_model": default_model
     }
 
 @app.post("/api/chat")
@@ -66,9 +87,10 @@ def chat_handler(req: ChatRequest):
     if not req.messages:
         raise HTTPException(status_code=400, detail="Messages array cannot be empty")
 
-    model_to_use = req.model or "gemma4b"
+    installed_models = get_installed_ollama_models()
+    model_to_use = resolve_best_model_name(req.model or "gemma4:latest", installed_models)
 
-    # Forward to local Ollama on Mac with speed acceleration options
+    # Forward to local Ollama on Mac with dynamic model resolution & mental health friend instruction
     try:
         formatted_messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION}
@@ -77,13 +99,6 @@ def chat_handler(req: ChatRequest):
         ollama_payload = json.dumps({
             "model": model_to_use,
             "messages": formatted_messages,
-            "options": {
-                "num_predict": 180,
-                "num_ctx": 2048,
-                "temperature": 0.6,
-                "top_k": 20,
-                "top_p": 0.8
-            },
             "stream": False
         }).encode('utf-8')
 
@@ -93,7 +108,7 @@ def chat_handler(req: ChatRequest):
             headers={"Content-Type": "application/json"}
         )
 
-        with urllib.request.urlopen(ollama_req, timeout=60) as response:
+        with urllib.request.urlopen(ollama_req, timeout=120) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode('utf-8'))
                 reply_text = data.get("message", {}).get("content", "")
@@ -101,16 +116,17 @@ def chat_handler(req: ChatRequest):
                     return {
                         "reply": reply_text,
                         "model": model_to_use,
-                        "engine": "Ollama Accelerated Gemma Engine"
+                        "engine": f"Ollama Local Mac ({model_to_use})"
                     }
     except Exception as e:
-        print(f"Ollama connection notice: {e}")
+        print(f"Ollama execution notice: {e}")
 
-    # Low-latency fallback
+    # Fallback response if Ollama is loading
+    last_user_msg = req.messages[-1].content
     return {
-        "reply": "Hello! I am your mental health friend. I'm right here with you to listen closely and help you with simple, comforting guidance. How can I best support you today?",
+        "reply": f"Hello! I am your mental health friend. I'm right here with you to listen closely and help you with simple, comforting guidance regarding '{last_user_msg}'. How can I best support you right now?",
         "model": model_to_use,
-        "engine": "Gemma Fast Mental Health Companion"
+        "engine": "Gemma Mental Health Companion"
     }
 
 if __name__ == "__main__":

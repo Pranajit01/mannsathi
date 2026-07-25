@@ -43,8 +43,8 @@ export default function Demo() {
 
   // Ollama Mac & Gemma Engine State
   const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'connected' | 'offline'>('checking');
-  const [availableModels, setAvailableModels] = useState<string[]>(['gemma4b', 'gemma4:latest', 'gemma-4-26b-a4b-it']);
-  const [selectedModel, setSelectedModel] = useState<string>('gemma4b');
+  const [availableModels, setAvailableModels] = useState<string[]>(['gemma4:latest', 'gemma4:e4b']);
+  const [selectedModel, setSelectedModel] = useState<string>('gemma4:latest');
 
   // Live Chat State
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -53,7 +53,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Hello! I am Gemma 4, your personal mental health companion running locally via Ollama on your Mac.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
+      content: 'Hello! I am Gemma 4, your mental health companion running locally via Ollama on your Mac.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -73,16 +73,17 @@ export default function Demo() {
       if (res.ok) {
         const data = await res.json();
         const models: string[] = data.models ? data.models.map((m: any) => m.name) : [];
-        const fullModelList = Array.from(new Set([...models, 'gemma4b', 'gemma4:latest', 'gemma-4-26b-a4b-it']));
-        setAvailableModels(fullModelList);
-        setOllamaStatus('connected');
-        
-        // Auto-select gemma4b or gemma4 model
-        const gemmaModel = models.find((m) => m.toLowerCase().includes('gemma4b')) || 
-                           models.find((m) => m.toLowerCase().includes('gemma4')) || 
-                           models.find((m) => m.toLowerCase().includes('gemma')) || 
-                           models[0] || 'gemma4b';
-        setSelectedModel(gemmaModel);
+        if (models.length > 0) {
+          setAvailableModels(models);
+          setOllamaStatus('connected');
+          const gemmaModel = models.find((m) => m.toLowerCase().includes('gemma4:latest')) || 
+                             models.find((m) => m.toLowerCase().includes('gemma4')) || 
+                             models.find((m) => m.toLowerCase().includes('gemma')) || 
+                             models[0];
+          setSelectedModel(gemmaModel);
+        } else {
+          setOllamaStatus('offline');
+        }
       } else {
         setOllamaStatus('offline');
       }
@@ -187,22 +188,15 @@ export default function Demo() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: selectedModel || 'gemma4b',
+            model: selectedModel || 'gemma4:latest',
             messages: [
               {
                 role: 'system',
-                content: 'You are a warm, caring mental health friend for the user. Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user\'s well-being. Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood. Keep your response concise, comforting, and focused (under 3-4 sentences).',
+                content: 'You are a warm, caring mental health friend for the user. Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user\'s well-being. Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question.',
               },
               ...historyForOllama,
               { role: 'user', content: text },
             ],
-            options: {
-              num_predict: 180,
-              num_ctx: 2048,
-              temperature: 0.6,
-              top_k: 20,
-              top_p: 0.8,
-            },
             stream: false,
           }),
         });
@@ -250,10 +244,7 @@ export default function Demo() {
 
     // 3. Friendly Human Embedded Fallback
     if (!replyContent) {
-      const offTopicKeywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x'];
-      if (offTopicKeywords.some(k => lowerText.includes(k))) {
-        replyContent = "Hey! I'm Gemma 4, your personal mental health companion for Mann Saathi. I'm here specifically to support you with your emotional well-being, stress relief, and mental health. How are you feeling today? Please feel free to share whatever is on your mind!";
-      } else if (detectedRisk === 4) {
+      if (detectedRisk === 4) {
         replyContent = "I can hear how deeply hurt and exhausted you're feeling right now, and I want you to know that your life matters so much. Please don't face this heavy pain alone. I'm right here with you. Please take a deep breath and sit comfortably in a safe room. I want you to connect right now with Tele-MANAS—they are India's free, 24/7 confidential helpline at 14416 or 1800-891-4416, or NIMHANS at 080-26995000. Will you reach out to them with me?";
       } else if (detectedRisk === 2) {
         replyContent = "I'm right here with you. Take a gentle breath in through your nose... hold it for a moment... and blow it out slowly through your mouth. What you're feeling right now is your body's natural reaction to stress, and even though it feels scary, you are safe and this panic will pass soon. Try taking a slow sip of cool water, un-clench your jaw, and let your shoulders drop. Would you like us to do a slow 4-count breathing exercise together right now?";
@@ -305,7 +296,7 @@ export default function Demo() {
             Gemma 4 <span className="text-warm-gradient">Local AI Companion</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Connected directly to your local Mac Ollama model (gemma4b / gemma4) for zero-latency, 100% private mental health support.
+            Connected directly to your local Mac Ollama model for zero-latency, 100% private mental health support.
           </p>
         </div>
 
@@ -479,7 +470,7 @@ export default function Demo() {
 
               {/* Typing Indicator */}
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[280px]">
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[260px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
                     Gemma 4 ({selectedModel}) is thinking...
