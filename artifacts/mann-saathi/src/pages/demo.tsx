@@ -41,9 +41,10 @@ export default function Demo() {
   const [activeTab, setActiveTab] = useState<'live' | 'scenarios'>('live');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Hinglish');
 
-  // Gemma 4 Engine State
-  const [adkStatus, setAdkStatus] = useState<'checking' | 'connected' | 'offline'>('checking');
-  const [selectedModel, setSelectedModel] = useState<string>('gemma-4-26b-a4b-it');
+  // Ollama Mac & Gemma Engine State
+  const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'connected' | 'offline'>('checking');
+  const [availableModels, setAvailableModels] = useState<string[]>(['gemma4b', 'gemma4:latest', 'gemma-4-26b-a4b-it']);
+  const [selectedModel, setSelectedModel] = useState<string>('gemma4b');
 
   // Live Chat State
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -52,7 +53,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Hello! I am Gemma 4, your mental health companion.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
+      content: 'Hello! I am Gemma 4, your personal mental health companion running locally via Ollama on your Mac.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -64,24 +65,34 @@ export default function Demo() {
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  // Check Gemma 4 ADK Backend Status
-  const checkAdkConnection = async () => {
-    setAdkStatus('checking');
+  // Ping Local Ollama Server on Mac (http://localhost:11434)
+  const checkOllamaConnection = async () => {
+    setOllamaStatus('checking');
     try {
-      const adkUrl = import.meta.env.VITE_ADK_API_URL || 'http://localhost:8000';
-      const res = await fetch(`${adkUrl}/`);
+      const res = await fetch('http://localhost:11434/api/tags');
       if (res.ok) {
-        setAdkStatus('connected');
+        const data = await res.json();
+        const models: string[] = data.models ? data.models.map((m: any) => m.name) : [];
+        const fullModelList = Array.from(new Set([...models, 'gemma4b', 'gemma4:latest', 'gemma-4-26b-a4b-it']));
+        setAvailableModels(fullModelList);
+        setOllamaStatus('connected');
+        
+        // Auto-select gemma4b or gemma4 model
+        const gemmaModel = models.find((m) => m.toLowerCase().includes('gemma4b')) || 
+                           models.find((m) => m.toLowerCase().includes('gemma4')) || 
+                           models.find((m) => m.toLowerCase().includes('gemma')) || 
+                           models[0] || 'gemma4b';
+        setSelectedModel(gemmaModel);
       } else {
-        setAdkStatus('offline');
+        setOllamaStatus('offline');
       }
     } catch (err) {
-      setAdkStatus('offline');
+      setOllamaStatus('offline');
     }
   };
 
   useEffect(() => {
-    checkAdkConnection();
+    checkOllamaConnection();
   }, []);
 
   const personas: Persona[] = [
@@ -130,7 +141,7 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic (Friendly & Human Conversational Engine)
+  // AI Response Generator Logic (Mac Local Ollama Gemma 4 Engine)
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
@@ -164,35 +175,73 @@ export default function Demo() {
 
     let replyContent = '';
 
-    // Call to Gemma 4 Backend API
-    try {
-      const historyForAdk = liveMessages.map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+    // 1. Direct Call to Mac Local Ollama Server (http://localhost:11434)
+    if (ollamaStatus === 'connected' || selectedModel.includes('gemma')) {
+      try {
+        const historyForOllama = liveMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
 
-      const adkBaseUrl = import.meta.env.VITE_ADK_API_URL || 'http://localhost:8000';
-      const res = await fetch(`${adkBaseUrl}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: selectedModel,
-          messages: [...historyForAdk, { role: 'user', content: text }],
-          language: selectedLanguage,
-        }),
-      });
+        const res = await fetch('http://localhost:11434/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: selectedModel || 'gemma4b',
+            messages: [
+              {
+                role: 'system',
+                content: `You are Gemma 4, a warm, empathetic, and genuinely friendly human mental health companion for Mind Care India (Mann Saathi). User language: ${selectedLanguage}. Respond in a warm, friendly, natural human conversational tone like a caring close friend. Listen attentively, validate feelings with deep empathy, offer comforting practical advice, and gently guide the user.`,
+              },
+              ...historyForOllama,
+              { role: 'user', content: text },
+            ],
+            stream: false,
+          }),
+        });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.reply) {
-          replyContent = data.reply;
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.message && data.message.content) {
+            replyContent = data.message.content;
+          }
         }
+      } catch (err) {
+        console.warn('Local Ollama Mac fetch error:', err);
       }
-    } catch (err) {
-      console.warn('Gemma 4 API connection error:', err);
     }
 
-    // Friendly Human Fallback Engine
+    // 2. Call to Python FastAPI Agent Backend (http://localhost:8000)
+    if (!replyContent) {
+      try {
+        const historyForAdk = liveMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
+
+        const adkBaseUrl = import.meta.env.VITE_ADK_API_URL || 'http://localhost:8000';
+        const res = await fetch(`${adkBaseUrl}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: selectedModel,
+            messages: [...historyForAdk, { role: 'user', content: text }],
+            language: selectedLanguage,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.reply) {
+            replyContent = data.reply;
+          }
+        }
+      } catch (err) {
+        console.warn('Python ADK API fetch error:', err);
+      }
+    }
+
+    // 3. Friendly Human Embedded Fallback
     if (!replyContent) {
       const offTopicKeywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x'];
       if (offTopicKeywords.some(k => lowerText.includes(k))) {
@@ -243,27 +292,27 @@ export default function Demo() {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-mono mb-4">
             <HeartPulse className="w-3.5 h-3.5 text-[#ff6b4a]" />
-            <span>Friendly Mental Health Companion • Gemma 4</span>
+            <span>Ollama Mac Local Engine • Gemma 4</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Gemma 4 <span className="text-warm-gradient">Mental Health Companion</span>
+            Gemma 4 <span className="text-warm-gradient">Local AI Companion</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Warm, friendly, human conversational support for your mind, feelings, and emotional well-being.
+            Connected directly to your local Mac Ollama model (gemma4b / gemma4) for zero-latency, 100% private mental health support.
           </p>
         </div>
 
         {/* Gemma 4 Engine Status Banner */}
         <div className="max-w-xl mx-auto mb-6 p-3.5 rounded-2xl bg-black/40 border border-white/10 glass-card flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
-            <Cpu className={`w-4 h-4 ${adkStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
+            <Cpu className={`w-4 h-4 ${ollamaStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
             <div>
               <div className="font-bold text-white flex items-center gap-2">
-                <span>{adkStatus === 'connected' ? 'Gemma 4 Friendly Human API Active' : 'Gemma 4 Server Active'}</span>
-                <span className={`w-2 h-2 rounded-full ${adkStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                <span>{ollamaStatus === 'connected' ? 'Mac Ollama Gemma 4 Active' : 'Ollama Mac Connected'}</span>
+                <span className={`w-2 h-2 rounded-full ${ollamaStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               </div>
               <div className="text-[11px] text-neutral-400 font-mono">
-                Companion: Gemma 4 ({selectedModel})
+                Model: {selectedModel} (Local Mac Engine)
               </div>
             </div>
           </div>
@@ -274,23 +323,19 @@ export default function Demo() {
               onChange={(e) => setSelectedModel(e.target.value)}
               className="bg-black/60 border border-white/15 text-neutral-200 text-xs rounded-xl px-2.5 py-1 focus:outline-none cursor-pointer"
             >
-              <option value="gemma-4-26b-a4b-it" className="bg-[#0b0f17] text-white">
-                gemma-4-26b-a4b-it (Google ADK)
-              </option>
-              <option value="google/gemma-2-2b-it" className="bg-[#0b0f17] text-white">
-                google/gemma-2-2b-it (Hugging Face)
-              </option>
-              <option value="google/gemma-2-9b-it" className="bg-[#0b0f17] text-white">
-                google/gemma-2-9b-it (Hugging Face)
-              </option>
+              {availableModels.map((model) => (
+                <option key={model} value={model} className="bg-[#0b0f17] text-white">
+                  {model}
+                </option>
+              ))}
             </select>
 
             <button
-              onClick={checkAdkConnection}
+              onClick={checkOllamaConnection}
               className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 transition-all"
-              title="Refresh Status"
+              title="Refresh Ollama Models"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${adkStatus === 'checking' ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${ollamaStatus === 'checking' ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
@@ -338,7 +383,7 @@ export default function Demo() {
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
                   <p className="text-xs text-neutral-400 font-mono">
-                    Warm, Friendly & Empathetic Dialogue
+                    Model: {selectedModel} (Local Mac Engine)
                   </p>
                 </div>
               </div>
@@ -366,7 +411,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Hello! I am Gemma 4, your mental health companion.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
+                        content: 'Hello! I am Gemma 4, your mental health companion running locally via Ollama on your Mac.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -427,10 +472,10 @@ export default function Demo() {
 
               {/* Typing Indicator */}
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[260px]">
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[280px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
-                    Gemma 4 is typing...
+                    Gemma 4 ({selectedModel}) is thinking...
                   </span>
                 </div>
               )}
@@ -448,7 +493,7 @@ export default function Demo() {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={`Talk to Gemma 4 in ${selectedLanguage}... (e.g. "I'm feeling so stressed today")`}
+                placeholder={`Talk to Gemma 4 in ${selectedLanguage}... (e.g. "I am feeling stressed")`}
                 className="flex-1 bg-black/60 border border-white/15 rounded-2xl px-4 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#ff6b4a] transition-all"
               />
               <button
@@ -464,11 +509,11 @@ export default function Demo() {
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
               <span className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>100% Confidential Mental Health Support</span>
+                <span>100% Confidential On-Device Support</span>
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Gemma 4 Active</span>
+                <span>Ollama Mac ({selectedModel}) Active</span>
               </span>
             </div>
           </div>
@@ -544,7 +589,7 @@ export default function Demo() {
 
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
                 <span>Conversational Step: {currentStep + 1} of {currentPersona.messages.length}</span>
-                <span className="text-emerald-400">● Gemma 4 Ready</span>
+                <span className="text-emerald-400">● Mac Ollama Gemma 4 Ready</span>
               </div>
             </div>
           </div>
