@@ -189,6 +189,10 @@ export default function Demo() {
           body: JSON.stringify({
             model: selectedModel || 'gemma4b',
             messages: [
+              {
+                role: 'system',
+                content: 'You are a helpful, friendly AI chatbot. Answer the user\'s questions clearly, accurately, and directly based on what they ask.',
+              },
               ...historyForOllama,
               { role: 'user', content: text },
             ],

@@ -8,8 +8,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 app = FastAPI(
-    title="Gemma Healthcare AI API (Ollama Powered)",
-    description="Clean, lightweight server connecting directly to local Mac Ollama Gemma models without Google API/SDK or custom system prompts"
+    title="Gemma AI Chatbot API",
+    description="Simple, helpful AI chatbot powered by local Ollama Gemma model"
 )
 
 # Enable CORS for web frontend
@@ -32,6 +32,11 @@ class ChatRequest(BaseModel):
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
+SYSTEM_INSTRUCTION = (
+    "You are a helpful, friendly AI chatbot. "
+    "Answer the user's questions clearly, accurately, and directly based on what they ask."
+)
+
 @app.get("/")
 def health_check():
     ollama_online = False
@@ -48,7 +53,7 @@ def health_check():
 
     return {
         "status": "operational",
-        "engine": "Ollama Local Mac Gemma Engine",
+        "engine": "Gemma AI Chatbot (Ollama Powered)",
         "ollama_online": ollama_online,
         "available_models": models,
         "default_model": "gemma4b"
@@ -61,11 +66,15 @@ def chat_handler(req: ChatRequest):
 
     model_to_use = req.model or "gemma4b"
 
-    # Forward directly to local Ollama on Mac without any custom system prompt
+    # Forward to local Ollama on Mac with simple custom instruction
     try:
+        formatted_messages = [
+            {"role": "system", "content": SYSTEM_INSTRUCTION}
+        ] + [{"role": m.role, "content": m.content} for m in req.messages]
+
         ollama_payload = json.dumps({
             "model": model_to_use,
-            "messages": [{"role": m.role, "content": m.content} for m in req.messages],
+            "messages": formatted_messages,
             "stream": False
         }).encode('utf-8')
 
@@ -83,17 +92,17 @@ def chat_handler(req: ChatRequest):
                     return {
                         "reply": reply_text,
                         "model": model_to_use,
-                        "engine": "Ollama Local Mac Gemma"
+                        "engine": "Ollama Gemma AI Chatbot"
                     }
     except Exception as e:
         print(f"Ollama connection notice: {e}")
 
-    # Healthcare AI response fallback if Ollama is initializing
+    # Clean direct response fallback
     last_user_msg = req.messages[-1].content
     return {
-        "reply": f"Hello! I am your Gemma Healthcare AI assistant. Regarding your question on '{last_user_msg}': I am here to help you with all healthcare, wellness, and medical questions. How can I best assist you today?",
+        "reply": f"Hello! I am your AI chatbot. I'm here to help answer any questions you have. How can I assist you today?",
         "model": model_to_use,
-        "engine": "Gemma Healthcare AI"
+        "engine": "Gemma AI Chatbot"
     }
 
 if __name__ == "__main__":
