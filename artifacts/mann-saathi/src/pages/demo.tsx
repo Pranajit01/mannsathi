@@ -189,10 +189,6 @@ export default function Demo() {
           body: JSON.stringify({
             model: selectedModel || 'gemma4b',
             messages: [
-              {
-                role: 'system',
-                content: `You are Gemma 4, a warm, empathetic, and genuinely friendly human mental health companion for Mind Care India (Mann Saathi). User language: ${selectedLanguage}. Respond in a warm, friendly, natural human conversational tone like a caring close friend. Listen attentively, validate feelings with deep empathy, offer comforting practical advice, and gently guide the user.`,
-              },
               ...historyForOllama,
               { role: 'user', content: text },
             ],
