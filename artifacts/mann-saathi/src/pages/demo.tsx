@@ -192,14 +192,14 @@ export default function Demo() {
             messages: [
               {
                 role: 'system',
-                content: 'You are a warm, caring mental health friend for the user. CRITICAL RULE: Always keep your responses SHORT, simple, and comforting (maximum 2-3 friendly sentences). Never write long paragraphs or long lists. Speak naturally like a caring friend in a quick chat message.',
+                content: 'You are a warm, empathetic, and intelligent mental health companion for the user. Carefully analyze and understand what the user is experiencing, feeling, or asking. Give a thoughtful, comforting, and direct response that answers their question or offers gentle advice in 2 to 4 clear sentences. DO NOT quote, repeat, or copy-paste the user\'s exact sentence back to them. Speak naturally like a supportive friend.',
               },
               ...historyForOllama,
               { role: 'user', content: text },
             ],
             stream: false,
             options: {
-              num_predict: 120,
+              num_predict: 250,
               temperature: 0.7,
             },
           }),
@@ -257,7 +257,7 @@ export default function Demo() {
       } else if (detectedRisk === 3) {
         replyContent = "Here are India's free, 24/7 confidential mental health helplines you can call anytime:\n\n• Tele-MANAS (Govt. Helpline): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• KIRAN Helpline: 1800-599-0019\n• Vandrevala Support: +91 9999 666 555\n\nThey are completely free, private, and available at any hour. Please feel free to reach out to them!";
       } else {
-        replyContent = `Thank you for sharing that with me. I'm Gemma 4, your personal mental health companion, and I'm listening closely to what you shared about '${text}'. Caring for your mind and feelings is so important, and you're taking a great step by talking it out. Whatever you're going through, take it one small step at a time. How can I best support you today?`;
+        replyContent = "Thank you for sharing that with me. Caring for your mind and feelings is so important, and you're taking a great step by talking it out. Take a deep breath, and know that you are not alone. How can I best support you right now?";
       }
     }
 

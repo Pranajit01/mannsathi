@@ -9,7 +9,7 @@ from typing import List, Optional
 
 app = FastAPI(
     title="Gemma Mental Health Companion API",
-    description="Warm, caring mental health friend AI powered by local Mac Ollama Gemma models with short concise responses"
+    description="Warm, intelligent mental health friend AI powered by local Mac Ollama Gemma models"
 )
 
 # Enable CORS for web frontend
@@ -33,9 +33,10 @@ class ChatRequest(BaseModel):
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 SYSTEM_INSTRUCTION = (
-    "You are a warm, caring mental health friend for the user. "
-    "CRITICAL RULE: Always keep your responses SHORT, simple, and comforting (maximum 2-3 friendly sentences). "
-    "Never write long paragraphs or long lists. Speak naturally like a caring friend in a quick chat message."
+    "You are a warm, empathetic, and intelligent mental health companion for the user. "
+    "Carefully analyze and understand what the user is experiencing, feeling, or asking. "
+    "Give a thoughtful, comforting, and direct response that answers their question or offers gentle advice in 2 to 4 clear sentences. "
+    "DO NOT quote, repeat, or copy-paste the user's exact sentence back to them. Speak naturally like a supportive friend."
 )
 
 def get_installed_ollama_models() -> List[str]:
@@ -90,7 +91,7 @@ def chat_handler(req: ChatRequest):
     installed_models = get_installed_ollama_models()
     model_to_use = resolve_best_model_name(req.model or "gemma4:latest", installed_models)
 
-    # Forward to local Ollama on Mac with short response constraint
+    # Forward to local Ollama on Mac with thoughtful non-repetitive instruction
     try:
         formatted_messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION}
@@ -101,7 +102,7 @@ def chat_handler(req: ChatRequest):
             "messages": formatted_messages,
             "stream": False,
             "options": {
-                "num_predict": 120,
+                "num_predict": 250,
                 "temperature": 0.7
             }
         }).encode('utf-8')
@@ -125,10 +126,17 @@ def chat_handler(req: ChatRequest):
     except Exception as e:
         print(f"Ollama execution notice: {e}")
 
-    # Short fallback response
-    last_user_msg = req.messages[-1].content
+    # Non-repetitive intelligent fallback
+    last_user_msg = (req.messages[-1].content or "").lower()
+    if any(k in last_user_msg for k in ["anxious", "stress", "exam", "panic", "fear"]):
+        fallback_reply = "It is completely normal to feel anxious under pressure. Take a slow, deep breath, break your task into small steps, and remember that you are capable of getting through this."
+    elif any(k in last_user_msg for k in ["sad", "depressed", "lonely", "alone", "hurt"]):
+        fallback_reply = "I hear you, and your feelings are completely valid. You do not have to carry this heavy weight alone—I am right here with you. What is on your mind?"
+    else:
+        fallback_reply = "I am listening closely. Take your time, and tell me a bit more about how you are feeling so I can support you best."
+
     return {
-        "reply": f"Hello my friend! I hear you regarding '{last_user_msg}'. Take a gentle deep breath—I am right here with you. How can I help you feel better today?",
+        "reply": fallback_reply,
         "model": model_to_use,
         "engine": "Gemma Mental Health Companion"
     }
