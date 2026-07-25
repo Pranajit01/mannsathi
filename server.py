@@ -9,7 +9,7 @@ from typing import List, Optional
 
 app = FastAPI(
     title="Gemma Mental Health Companion API",
-    description="Warm, caring mental health friend AI powered by local Mac Ollama Gemma models"
+    description="Warm, caring mental health friend AI powered by local Mac Ollama Gemma models with short concise responses"
 )
 
 # Enable CORS for web frontend
@@ -34,8 +34,8 @@ OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 SYSTEM_INSTRUCTION = (
     "You are a warm, caring mental health friend for the user. "
-    "Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user's well-being. "
-    "Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question."
+    "CRITICAL RULE: Always keep your responses SHORT, simple, and comforting (maximum 2-3 friendly sentences). "
+    "Never write long paragraphs or long lists. Speak naturally like a caring friend in a quick chat message."
 )
 
 def get_installed_ollama_models() -> List[str]:
@@ -90,7 +90,7 @@ def chat_handler(req: ChatRequest):
     installed_models = get_installed_ollama_models()
     model_to_use = resolve_best_model_name(req.model or "gemma4:latest", installed_models)
 
-    # Forward to local Ollama on Mac with dynamic model resolution & mental health friend instruction
+    # Forward to local Ollama on Mac with short response constraint
     try:
         formatted_messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION}
@@ -99,7 +99,11 @@ def chat_handler(req: ChatRequest):
         ollama_payload = json.dumps({
             "model": model_to_use,
             "messages": formatted_messages,
-            "stream": False
+            "stream": False,
+            "options": {
+                "num_predict": 120,
+                "temperature": 0.7
+            }
         }).encode('utf-8')
 
         ollama_req = urllib.request.Request(
@@ -121,10 +125,10 @@ def chat_handler(req: ChatRequest):
     except Exception as e:
         print(f"Ollama execution notice: {e}")
 
-    # Fallback response if Ollama is loading
+    # Short fallback response
     last_user_msg = req.messages[-1].content
     return {
-        "reply": f"Hello! I am your mental health friend. I'm right here with you to listen closely and help you with simple, comforting guidance regarding '{last_user_msg}'. How can I best support you right now?",
+        "reply": f"Hello my friend! I hear you regarding '{last_user_msg}'. Take a gentle deep breath—I am right here with you. How can I help you feel better today?",
         "model": model_to_use,
         "engine": "Gemma Mental Health Companion"
     }

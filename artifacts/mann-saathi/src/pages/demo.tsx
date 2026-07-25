@@ -192,12 +192,16 @@ export default function Demo() {
             messages: [
               {
                 role: 'system',
-                content: 'You are a warm, caring mental health friend for the user. Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user\'s well-being. Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question.',
+                content: 'You are a warm, caring mental health friend for the user. CRITICAL RULE: Always keep your responses SHORT, simple, and comforting (maximum 2-3 friendly sentences). Never write long paragraphs or long lists. Speak naturally like a caring friend in a quick chat message.',
               },
               ...historyForOllama,
               { role: 'user', content: text },
             ],
             stream: false,
+            options: {
+              num_predict: 120,
+              temperature: 0.7,
+            },
           }),
         });
 
