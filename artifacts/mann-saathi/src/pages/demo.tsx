@@ -52,7 +52,7 @@ export default function Demo() {
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Hello! I am Gemma 4, your personal mental health assistant.\n\nI am here to listen, help you understand what you are feeling, and give you simple, easy steps to feel better. How are you feeling today?',
+      content: 'Hello! I am Gemma 4, your mental health companion.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       riskLevel: 0,
     },
@@ -90,11 +90,11 @@ export default function Demo() {
       name: 'Arjun (Engineering Student)',
       scenario: 'Exam stress, family expectations',
       messages: [
-        { role: 'assistant', content: 'Hello Arjun! I am Gemma 4. How are you feeling today?', risk: 0 },
+        { role: 'assistant', content: 'Hey Arjun! I am Gemma 4. How are you feeling today?', risk: 0 },
         { role: 'user', content: 'Bahut stress hai. Exam aa raha hai aur kuch samajh nahi aa raha.' },
-        { role: 'assistant', content: '🌱 **What is happening**: You are feeling heavy pressure from upcoming exams. It is completely normal to feel stressed when you want to do well.\n\n✨ **Simple Steps**:\n1. Focus on just 1 small topic for 20 minutes.\n2. Take a 10-minute break to breathe fresh air.\n3. An exam does not decide your value as a person.', risk: 1 },
+        { role: 'assistant', content: 'Hey, I hear you. Exam stress can feel so heavy, especially when you want to do well. Take a pause and breathe—you do not have to finish everything at once. Focus on one small chapter for 20 minutes, take a fresh air break, and remember that an exam does not define how capable you are. What is the main topic stressing you out right now?', risk: 1 },
         { role: 'user', content: 'Sab friends acche college mein hain. Main bas ek failure hoon.' },
-        { role: 'assistant', content: '🌱 **What is happening**: Comparing yourself to others can make you feel down. Everyone has their own unique timeline.\n\n✨ **Simple Steps**:\n1. Stop comparing your journey to others.\n2. Focus on 1 small win today.\n3. Be kind to yourself.', risk: 2 },
+        { role: 'assistant', content: 'Comparing yourself to others can hurt so deeply. But your journey is yours alone, and you have come through hard times before. Let us focus on your progress today. I am right here with you.', risk: 2 },
       ],
     },
     {
@@ -104,9 +104,9 @@ export default function Demo() {
       messages: [
         { role: 'assistant', content: 'Hello Ramesh. I am Gemma 4. How can I support you today?', risk: 0 },
         { role: 'user', content: 'पीक बरबाद झालं. कर्ज फेडायला नाही येत. काय करावं समजत नाही.' },
-        { role: 'assistant', content: '🌱 **What is happening**: You are carrying a heavy worry about crops and loans. You are not alone in this.\n\n✨ **Simple Steps**:\n1. Do not carry this burden alone.\n2. Talk to a trusted family member or counselor.', risk: 2 },
+        { role: 'assistant', content: 'I hear the heavy worry in your heart. Please know that you are not alone in this struggle, and your life is irreplaceable.', risk: 2 },
         { role: 'user', content: 'माझे तीन शेजारी गेल्या वर्षी... त्यांनी suicide केला. मला पण वाटतं कधी कधी.' },
-        { role: 'assistant', content: '❤️ **I am here for you**: Your life matters so much. Please talk right now with Tele-MANAS at `14416` (Free 24/7 helpline). You are not alone.', risk: 4 },
+        { role: 'assistant', content: 'I am right here with you. Your life matters so much. Please reach out right now to Tele-MANAS at 14416—they offer free, 24/7 confidential support across India.', risk: 4 },
       ],
     },
     {
@@ -114,9 +114,9 @@ export default function Demo() {
       name: 'Anjali (Domestic Violence Survivor)',
       scenario: 'Escaped abusive situation, safety support',
       messages: [
-        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4. You are in a safe, private space.', risk: 0 },
+        { role: 'assistant', content: 'Hello Anjali. I am Gemma 4. You are in a safe, caring space.', risk: 0 },
         { role: 'user', content: 'घर छोड़ दिया. बच्चे हैं. कहाँ जाऊँ पता नहीं. डर लग रहा है.' },
-        { role: 'assistant', content: '🌱 **What is happening**: You took a very brave step for your safety and your children.\n\n✨ **Simple Steps**:\n1. Stay in a safe physical location.\n2. Call Women Helpline `181` for instant support.\n3. Take one step at a time.', risk: 3 },
+        { role: 'assistant', content: 'You took a very brave step for your safety and your children. Please focus on staying in a safe room right now. You can call Women Helpline 181 for immediate legal and housing guidance. I am here with you.', risk: 3 },
       ],
     },
   ];
@@ -130,7 +130,7 @@ export default function Demo() {
     }
   }, [liveMessages, isTyping]);
 
-  // AI Response Generator Logic (Simple, Warm & Helpful Engine)
+  // AI Response Generator Logic (Friendly & Human Conversational Engine)
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text) return;
@@ -192,21 +192,21 @@ export default function Demo() {
       console.warn('Gemma 4 API connection error:', err);
     }
 
-    // Simple & Clear Fallback Engine
+    // Friendly Human Fallback Engine
     if (!replyContent) {
       const offTopicKeywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x'];
       if (offTopicKeywords.some(k => lowerText.includes(k))) {
-        replyContent = "Hello! I am Gemma 4, your mental health assistant for Mann Saathi. I focus strictly on helping you with emotional support, stress relief, and personal well-being. How are you feeling today? Feel free to share what is on your mind.";
+        replyContent = "Hey! I'm Gemma 4, your personal mental health companion for Mann Saathi. I'm here specifically to support you with your emotional well-being, stress relief, and mental health. How are you feeling today? Please feel free to share whatever is on your mind!";
       } else if (detectedRisk === 4) {
-        replyContent = "❤️ **I am here for you**: I hear how deeply hurt you feel right now. Please know that your life matters and you do not have to carry this alone.\n\n✨ **Simple Steps**:\n1. Sit down comfortably in a safe place.\n2. Talk to a trusted family member or friend right now.\n3. Call **Tele-MANAS (`14416` or `1800-891-4416`)** for free 24/7 helpline care.";
+        replyContent = "I can hear how deeply hurt and exhausted you're feeling right now, and I want you to know that your life matters so much. Please don't face this heavy pain alone. I'm right here with you. Please take a deep breath and sit comfortably in a safe room. I want you to connect right now with Tele-MANAS—they are India's free, 24/7 confidential helpline at 14416 or 1800-891-4416, or NIMHANS at 080-26995000. Will you reach out to them with me?";
       } else if (detectedRisk === 2) {
-        replyContent = "🌱 **What is happening**: Your body is feeling sudden stress, causing a fast heart rate or tight feeling. You are safe, and this will pass.\n\n✨ **Simple Steps**:\n1. **Slow Breathing**: Breathe in for 4 seconds, hold for 4 seconds, exhale for 4 seconds.\n2. **Sip Cool Water**: Drink a few sips and relax your shoulders.\n3. **Look Around**: Name 3 things you can see right now.";
+        replyContent = "I'm right here with you. Take a gentle breath in through your nose... hold it for a moment... and blow it out slowly through your mouth. What you're feeling right now is your body's natural reaction to stress, and even though it feels scary, you are safe and this panic will pass soon. Try taking a slow sip of cool water, un-clench your jaw, and let your shoulders drop. Would you like us to do a slow 4-count breathing exercise together right now?";
       } else if (detectedRisk === 1) {
-        replyContent = "🌱 **What is happening**: You are feeling heavy stress from exams or expectations. It is completely normal to feel overwhelmed at times.\n\n✨ **Simple Steps**:\n1. **Focus Small**: Study for just 20 minutes, then rest.\n2. **Take a Break**: Step away from screens for 10 minutes.\n3. **Remember Your Worth**: An exam does NOT decide your value or future.";
+        replyContent = "Hey, I hear you. Exam and career pressure can feel so heavy, especially when you want to do well and meet everyone's expectations. It's completely normal to feel overwhelmed right now. Please remember to take a pause and give yourself grace—you don't have to tackle everything all at once. Try taking a quick 10-minute break away from your books, get some fresh air or a glass of water, and then take things just one small topic at a time. An exam tests memory for one day; it never defines how capable or wonderful you are. I'm right here with you. What's the main topic stressing you out today?";
       } else if (detectedRisk === 3) {
-        replyContent = "📞 **Free 24/7 Mental Health Helplines in India**:\n\n• **Tele-MANAS**: Call `14416` or `1800-891-4416`\n• **NIMHANS Helpline**: Call `080-26995000`\n• **KIRAN Helpline**: Call `1800-599-0019`\n• **Vandrevala Foundation**: Call `+91 9999 666 555`\n\nThese helplines are 100% free, private, and available anytime.";
+        replyContent = "Here are India's free, 24/7 confidential mental health helplines you can call anytime:\n\n• Tele-MANAS (Govt. Helpline): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• KIRAN Helpline: 1800-599-0019\n• Vandrevala Support: +91 9999 666 555\n\nThey are completely free, private, and available at any hour. Please feel free to reach out to them!";
       } else {
-        replyContent = `🌱 **What is happening**: I am listening to what you shared about '${text}'. Caring for your mental health is very important.\n\n✨ **Simple Steps**:\n1. Take a slow deep breath.\n2. Focus on one small step at a time.\n3. Let me know if you need simple relaxation tips.\n\nHow can I best help you right now?`;
+        replyContent = `Thank you for sharing that with me. I'm Gemma 4, your personal mental health companion, and I'm listening closely to what you shared about '${text}'. Caring for your mind and feelings is so important, and you're taking a great step by talking it out. Whatever you're going through, take it one small step at a time. How can I best support you today?`;
       }
     }
 
@@ -243,13 +243,13 @@ export default function Demo() {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-mono mb-4">
             <HeartPulse className="w-3.5 h-3.5 text-[#ff6b4a]" />
-            <span>Mental Health Assistant • Gemma 4</span>
+            <span>Friendly Mental Health Companion • Gemma 4</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl sm:text-5xl text-white uppercase tracking-tight leading-tight">
-            Gemma 4 <span className="text-warm-gradient">Mental Health Assistant</span>
+            Gemma 4 <span className="text-warm-gradient">Mental Health Companion</span>
           </h1>
           <p className="text-neutral-300 text-sm sm:text-base font-normal mt-3 max-w-xl mx-auto">
-            Simple, warm, and easy-to-understand support for your emotional well-being and stress relief.
+            Warm, friendly, human conversational support for your mind, feelings, and emotional well-being.
           </p>
         </div>
 
@@ -259,11 +259,11 @@ export default function Demo() {
             <Cpu className={`w-4 h-4 ${adkStatus === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
             <div>
               <div className="font-bold text-white flex items-center gap-2">
-                <span>{adkStatus === 'connected' ? 'Gemma 4 API Connected' : 'Gemma 4 Server Active'}</span>
+                <span>{adkStatus === 'connected' ? 'Gemma 4 Friendly Human API Active' : 'Gemma 4 Server Active'}</span>
                 <span className={`w-2 h-2 rounded-full ${adkStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               </div>
               <div className="text-[11px] text-neutral-400 font-mono">
-                Assistant: Gemma 4 ({selectedModel})
+                Companion: Gemma 4 ({selectedModel})
               </div>
             </div>
           </div>
@@ -317,7 +317,7 @@ export default function Demo() {
             }`}
           >
             <Users className="w-4 h-4 text-amber-300" />
-            <span>Simple Guided Scenarios</span>
+            <span>Guided Support Scenarios</span>
           </button>
         </div>
 
@@ -334,11 +334,11 @@ export default function Demo() {
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-white flex items-center gap-2">
-                    <span>Gemma 4 Mental Health Assistant</span>
+                    <span>Gemma 4 Mental Health Companion</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h3>
                   <p className="text-xs text-neutral-400 font-mono">
-                    Simple & Easy Emotional Well-being Support
+                    Warm, Friendly & Empathetic Dialogue
                   </p>
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Hello! I am Gemma 4, your personal mental health assistant.\n\nI am here to listen, help you understand what you are feeling, and give you simple, easy steps to feel better. How are you feeling today?',
+                        content: 'Hello! I am Gemma 4, your mental health companion.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -430,7 +430,7 @@ export default function Demo() {
                 <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 max-w-[260px]">
                   <Brain className="w-4 h-4 text-[#ff6b4a] animate-spin" />
                   <span className="text-xs font-mono text-neutral-400">
-                    Gemma 4 is thinking...
+                    Gemma 4 is typing...
                   </span>
                 </div>
               )}
@@ -448,7 +448,7 @@ export default function Demo() {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={`Talk to Gemma 4 in ${selectedLanguage}... (e.g. "I am feeling very stressed about my exams")`}
+                placeholder={`Talk to Gemma 4 in ${selectedLanguage}... (e.g. "I'm feeling so stressed today")`}
                 className="flex-1 bg-black/60 border border-white/15 rounded-2xl px-4 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#ff6b4a] transition-all"
               />
               <button
@@ -464,7 +464,7 @@ export default function Demo() {
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
               <span className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>100% Confidential Support</span>
+                <span>100% Confidential Mental Health Support</span>
               </span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />

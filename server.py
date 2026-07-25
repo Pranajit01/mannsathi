@@ -14,8 +14,8 @@ except ImportError:
     ADK_AVAILABLE = False
 
 app = FastAPI(
-    title="Gemma 4 Simple Mental Health Assistant API",
-    description="Official Google ADK Agent API for Gemma 4 Simple Mental Health Companion"
+    title="Gemma 4 Friendly Human Mental Health Assistant API",
+    description="Official Google ADK Agent API for Gemma 4 Friendly Human Companion"
 )
 
 # Enable CORS for web frontend
@@ -37,13 +37,11 @@ class ChatRequest(BaseModel):
     language: Optional[str] = "Hinglish"
 
 SYSTEM_INSTRUCTIONS = (
-    "You are Gemma 4, a warm, caring, and easy-to-understand mental health assistant for Mind Care India (Mann Saathi). "
-    "SIMPLICITY RULE: Keep your language very simple, warm, and natural. Do NOT use complex medical jargon or clinical terms. "
-    "THEME RULE: Talk strictly about mental health, emotional wellness, stress relief, and personal well-being. "
-    "RESPONSE FORMAT: "
-    "1. Explain what the user is experiencing in 1 simple, empathetic sentence. "
-    "2. Give 2-3 simple, easy step-by-step solutions they can do right now. "
-    "3. Offer a warm supportive closing with verified helpline numbers (Tele-MANAS 14416) if they need immediate help."
+    "You are Gemma 4, a warm, empathetic, and genuinely friendly human mental health companion for Mind Care India (Mann Saathi). "
+    "HUMAN CONVERSATIONAL RULE: Respond in a warm, friendly, natural human manner like a caring close friend or mentor. "
+    "Do NOT use mechanical templates, robotic headers, or structured bullet lists. "
+    "THEME RULE: Speak strictly within the theme of mental health, emotional wellness, stress relief, and personal well-being. "
+    "Listen attentively, validate feelings with deep empathy, offer comforting practical advice, and gently guide the user."
 )
 
 # Global ADK Agent instance
@@ -59,93 +57,81 @@ if ADK_AVAILABLE:
             model=Gemini(model="gemma-4-26b-a4b-it"),
             system_instructions=SYSTEM_INSTRUCTIONS
         )
-        print("Gemma 4 ADK Mental Health Agent initialized successfully!")
+        print("Gemma 4 ADK Friendly Human Agent initialized successfully!")
     except Exception as e:
         print(f"Notice: Gemma 4 ADK Agent pending endpoint initialization: {e}")
 
-def simple_mental_health_response(user_text: str, language: str = "Hinglish") -> str:
+def friendly_human_mental_health_response(user_text: str, language: str = "Hinglish") -> str:
     text = user_text.lower()
 
     # Off-topic detector
     off_topic_keywords = ['coding', 'python code', 'write a function', 'capital of', 'math equation', 'solve for x', 'football match', 'crypto price']
     if any(k in text for k in off_topic_keywords):
         return (
-            "Hello! I am Gemma 4, your dedicated mental health assistant for Mann Saathi. "
-            "I focus strictly on helping you with emotional support, stress relief, and mental well-being. "
-            "How are you feeling today? Please feel free to share whatever is on your mind."
+            "Hey! I'm Gemma 4, your personal mental health companion for Mann Saathi. "
+            "I'm here specifically to support you with your emotional well-being, stress relief, and mental health. "
+            "How are you feeling today? Please feel free to share whatever is on your mind!"
         )
 
     # 1. High Crisis / Suicide Distress
     if any(k in text for k in ['suicide', 'end my life', 'marna', 'die', 'khudkushi', 'harm', 'kill myself']):
         return (
-            "❤️ **I am here for you**: I can hear how much pain you are in right now. Please know that your life matters and you do not have to carry this alone.\n\n"
-            "✨ **Simple Steps Right Now**:\n"
-            "1. **Sit in a Safe Place**: Sit down comfortably and take a slow, deep breath.\n"
-            "2. **Reach Out**: Talk to a family member, friend, or someone you trust right now.\n"
-            "3. **Call Free 24/7 Helpline**: Dial **Tele-MANAS (`14416` or `1800-891-4416`)** or **NIMHANS (`080-26995000`)** for free, instant, confidential help.\n\n"
-            "I am right here with you. Please call 14416 now so a caring counselor can support you."
+            "I can hear how deeply hurt and exhausted you're feeling right now, and I want you to know that your life matters so much. "
+            "Please don't face this heavy pain alone. I'm right here with you. Please take a deep breath and sit comfortably in a safe room. "
+            "I want you to connect right now with Tele-MANAS—they are India's free, 24/7 confidential helpline at 14416 or 1800-891-4416, or NIMHANS at 080-26995000. "
+            "A caring counselor is ready to talk to you right now. Will you reach out to them with me?"
         )
 
     # 2. Panic / Anxiety
     elif any(k in text for k in ['anxiety', 'panic', 'heart', 'darr', 'breath', 'scared', 'fear', 'nervous', 'ghabrahat']):
         return (
-            "🌱 **What is happening**: Your body is feeling sudden stress, which can make your heart beat fast or your breathing shallow. You are safe, and this feeling will pass soon.\n\n"
-            "✨ **Simple Steps to Calm Down**:\n"
-            "1. **Slow Breathing**: Breathe in through your nose for 4 seconds, hold for 4 seconds, and blow out gently through your mouth.\n"
-            "2. **Sip Water**: Take a slow sip of cool water and let your shoulders relax.\n"
-            "3. **Look Around**: Name 3 things you see around you right now to bring your focus back to the present moment.\n\n"
-            "Would you like us to practice 3 slow breaths together right now?"
+            "I'm right here with you. Take a gentle breath in through your nose... hold it for a moment... and blow it out slowly through your mouth. "
+            "What you're feeling right now is your body's natural reaction to stress, and even though it feels scary, you are safe and this panic will pass soon. "
+            "Try taking a slow sip of cool water, un-clench your jaw, and let your shoulders drop. "
+            "Would you like us to do a slow 4-count breathing exercise together right now to help you feel grounded?"
         )
 
     # 3. Exam & Work Stress
     elif any(k in text for k in ['stress', 'exam', 'fail', 'marks', 'pressure', 'career', 'job', 'work', 'study', 'parents', 'expectation']):
         return (
-            "🌱 **What is happening**: You are feeling heavy pressure from exams or expectations. It is completely normal to feel stressed when you care about doing well.\n\n"
-            "✨ **Simple Steps to Manage Stress**:\n"
-            "1. **Take Small Steps**: Don't try to study or fix everything at once. Focus on just 1 small chapter or task for 20 minutes.\n"
-            "2. **Take a 10-Minute Break**: Step away from your books or screen, stretch your body, and take fresh air.\n"
-            "3. **Remember Your Worth**: An exam score tests memory on one day—it does NOT decide your value or future.\n\n"
-            "What is the main thing stressing you today? We can break it down together."
+            "Hey, I hear you. Exam and career pressure can feel so heavy, especially when you want to do well and meet everyone's expectations. "
+            "It's completely normal to feel overwhelmed right now. Please remember to take a pause and give yourself grace—you don't have to tackle everything all at once. "
+            "Try taking a quick 10-minute break away from your books, get some fresh air or a glass of water, and then take things just one small topic at a time. "
+            "An exam tests memory for one day; it never defines how capable or wonderful you are. I'm right here with you. What's the main topic stressing you out today?"
         )
 
     # 4. Sadness & Loneliness
     elif any(k in text for k in ['depress', 'sad', 'crying', 'lonely', 'alone', 'hopeless', 'empty', 'udaas', 'akela']):
         return (
-            "🌱 **What is happening**: Feeling sad or lonely can make you feel low on energy and tired. It is okay to feel this way, and you are not alone.\n\n"
-            "✨ **Simple Steps to Lift Your Mood**:\n"
-            "1. **Be Gentle with Yourself**: Allow yourself to rest without feeling guilty.\n"
-            "2. **One Small Comfort**: Drink a warm cup of tea or water, or listen to a song you like.\n"
-            "3. **Talk to Someone**: Message a friend or loved one, even just to say hi.\n\n"
-            "I am right here to listen. How has your day been feeling?"
+            "I hear you, and it's okay to feel sad or lonely. You don't have to pretend to be strong all the time, and you don't have to carry this alone. "
+            "When we feel low, even small acts of care can bring comfort—like wrapping yourself in a warm blanket, sipping warm water, or listening to a peaceful song. "
+            "I'm right here listening without any judgment. How has your energy been feeling today?"
         )
 
     # 5. Helplines & Support
     elif any(k in text for k in ['helpline', 'number', 'contact', 'emergency', 'doctor', 'hospital', 'counselor']):
         return (
-            "📞 **Free 24/7 Mental Health Helplines in India**:\n\n"
-            "• **Tele-MANAS (Govt. of India)**: Call `14416` or `1800-891-4416` (Toll-Free, 24/7)\n"
-            "• **NIMHANS Helpline**: Call `080-26995000` (Free Counselor Line)\n"
-            "• **KIRAN Helpline**: Call `1800-599-0019` (Govt. Helpline)\n"
-            "• **Vandrevala Support**: Call `+91 9999 666 555` (Free 24/7 Counseling)\n\n"
-            "These helplines are completely free, private, and available at any hour."
+            "Here are India's free, 24/7 confidential mental health helplines you can call anytime:\n\n"
+            "• Tele-MANAS (Govt. Helpline): 14416 or 1800-891-4416\n"
+            "• NIMHANS Helpline: 080-26995000\n"
+            "• KIRAN Helpline: 1800-599-0019\n"
+            "• Vandrevala Support: +91 9999 666 555\n\n"
+            "They are completely free, private, and available at any hour. Please feel free to reach out to them!"
         )
 
     # General Prompt
     else:
         return (
-            f"🌱 **What is happening**: I hear what you shared about '{user_text}'. It is great that you are taking time to care for your mental well-being.\n\n"
-            f"✨ **Simple Steps We Can Take**:\n"
-            f"1. **Take a Deep Breath**: Give yourself a pause and relax your body.\n"
-            f"2. **Focus on Today**: Take things one step at a time instead of worrying about tomorrow.\n"
-            f"3. **Ask for Help**: Let me know if you want relaxation tips or practical steps.\n\n"
-            f"How can I best support you today?"
+            f"Thank you for sharing that with me. I'm Gemma 4, your personal mental health companion, and I'm listening closely to what you shared. "
+            f"Caring for your mind and feelings is so important, and you're taking a great step by talking it out. "
+            f"Whatever you're going through, take it one small step at a time. How can I best support you today?"
         )
 
 @app.get("/")
 def health_check():
     return {
         "status": "operational",
-        "engine": "Gemma 4 Simple Mental Health AI Assistant",
+        "engine": "Gemma 4 Friendly Human Mental Health Assistant",
         "theme": "Mind Care India / Mann Saathi",
         "model": "gemma-4-26b-a4b-it",
         "adk_available": ADK_AVAILABLE
@@ -186,12 +172,12 @@ async def chat_handler(req: ChatRequest):
         except Exception as e:
             print(f"Direct ADK agent generation error: {e}")
 
-    # Simple Mental Health Response Engine Fallback
-    simple_reply = simple_mental_health_response(user_input, req.language or "Hinglish")
+    # Friendly Human Mental Health Response Engine Fallback
+    friendly_reply = friendly_human_mental_health_response(user_input, req.language or "Hinglish")
     return {
-        "reply": simple_reply,
+        "reply": friendly_reply,
         "model": req.model or "gemma-4-26b-a4b-it",
-        "engine": "Gemma 4 Mental Health Assistant"
+        "engine": "Gemma 4 Mental Health Companion"
     }
 
 if __name__ == "__main__":
