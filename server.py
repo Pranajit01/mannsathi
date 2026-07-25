@@ -8,8 +8,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 app = FastAPI(
-    title="Gemma AI Chatbot API",
-    description="Simple, helpful AI chatbot powered by local Ollama Gemma model"
+    title="Gemma Mental Health Companion API",
+    description="Warm, caring mental health friend AI powered by local Ollama Gemma model"
 )
 
 # Enable CORS for web frontend
@@ -33,8 +33,9 @@ class ChatRequest(BaseModel):
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 SYSTEM_INSTRUCTION = (
-    "You are a helpful, friendly AI chatbot. "
-    "Answer the user's questions clearly, accurately, and directly based on what they ask."
+    "You are a warm, caring mental health friend for the user. "
+    "Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user's well-being. "
+    "Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question."
 )
 
 @app.get("/")
@@ -53,7 +54,7 @@ def health_check():
 
     return {
         "status": "operational",
-        "engine": "Gemma AI Chatbot (Ollama Powered)",
+        "engine": "Gemma Mental Health Companion (Ollama Powered)",
         "ollama_online": ollama_online,
         "available_models": models,
         "default_model": "gemma4b"
@@ -66,7 +67,7 @@ def chat_handler(req: ChatRequest):
 
     model_to_use = req.model or "gemma4b"
 
-    # Forward to local Ollama on Mac with simple custom instruction
+    # Forward to local Ollama on Mac with caring mental health friend system instruction
     try:
         formatted_messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION}
@@ -92,17 +93,17 @@ def chat_handler(req: ChatRequest):
                     return {
                         "reply": reply_text,
                         "model": model_to_use,
-                        "engine": "Ollama Gemma AI Chatbot"
+                        "engine": "Ollama Gemma Mental Health Companion"
                     }
     except Exception as e:
         print(f"Ollama connection notice: {e}")
 
-    # Clean direct response fallback
+    # Warm & comforting fallback response
     last_user_msg = req.messages[-1].content
     return {
-        "reply": f"Hello! I am your AI chatbot. I'm here to help answer any questions you have. How can I assist you today?",
+        "reply": f"Hello! I am your mental health friend. I'm right here with you to listen closely and help you with simple, comforting guidance. How can I best support you today?",
         "model": model_to_use,
-        "engine": "Gemma AI Chatbot"
+        "engine": "Gemma Mental Health Companion"
     }
 
 if __name__ == "__main__":

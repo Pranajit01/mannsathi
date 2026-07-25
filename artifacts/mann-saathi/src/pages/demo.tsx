@@ -191,7 +191,7 @@ export default function Demo() {
             messages: [
               {
                 role: 'system',
-                content: 'You are a helpful, friendly AI chatbot. Answer the user\'s questions clearly, accurately, and directly based on what they ask.',
+                content: 'You are a warm, caring mental health friend for the user. Listen attentively and give thoughtfully evaluated, helpful responses to benefit the user\'s well-being. Use simple, comforting, and friendly words to make the user feel completely safe, comfortable, and understood whenever they ask any question.',
               },
               ...historyForOllama,
               { role: 'user', content: text },
