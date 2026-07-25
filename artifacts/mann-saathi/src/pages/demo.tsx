@@ -275,13 +275,13 @@ export default function Demo() {
               className="bg-black/60 border border-white/15 text-neutral-200 text-xs rounded-xl px-2.5 py-1 focus:outline-none cursor-pointer"
             >
               <option value="gemma-4-26b-a4b-it" className="bg-[#0b0f17] text-white">
-                gemma-4-26b-a4b-it
+                gemma-4-26b-a4b-it (Google ADK)
               </option>
-              <option value="gemma-4-9b-it" className="bg-[#0b0f17] text-white">
-                gemma-4-9b-it
+              <option value="google/gemma-2-2b-it" className="bg-[#0b0f17] text-white">
+                google/gemma-2-2b-it (Hugging Face)
               </option>
-              <option value="gemma-4-2b-it" className="bg-[#0b0f17] text-white">
-                gemma-4-2b-it
+              <option value="google/gemma-2-9b-it" className="bg-[#0b0f17] text-white">
+                google/gemma-2-9b-it (Hugging Face)
               </option>
             </select>
 
