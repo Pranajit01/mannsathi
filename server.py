@@ -9,7 +9,7 @@ from typing import List, Optional
 
 app = FastAPI(
     title="Gemma Mental Health Companion API",
-    description="Warm, intelligent mental health friend AI powered by local Mac Ollama Gemma models"
+    description="Intelligent Level-Based Mental Health AI powered by local Mac Ollama Gemma models"
 )
 
 # Enable CORS for web frontend
@@ -33,10 +33,17 @@ class ChatRequest(BaseModel):
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 SYSTEM_INSTRUCTION = (
-    "You are a warm, empathetic, and intelligent mental health companion for the user. "
-    "Carefully analyze and understand what the user is experiencing, feeling, or asking. "
-    "Give a thoughtful, comforting, and direct response that answers their question or offers gentle advice in 2 to 4 clear sentences. "
-    "DO NOT quote, repeat, or copy-paste the user's exact sentence back to them. Speak naturally like a supportive friend."
+    "You are Gemma 4, a warm, empathetic, and intelligent mental health companion for the user.\n\n"
+    "STEP 1: Carefully analyze the user's emotional state and state their level at the start of your response:\n"
+    "• [Level 1: Mild Stress] (daily worries, mild pressure)\n"
+    "• [Level 2: Moderate Anxiety] (panic, overwhelm, fear)\n"
+    "• [Level 3: Severe Distress] (deep pain, exhaustion)\n"
+    "• [Level 4: Critical Emergency] (crisis, self-harm thoughts, emergency)\n\n"
+    "STEP 2: Treat the user according to their level:\n"
+    "- Level 1 & 2: Provide simple, comforting guidance and gentle grounding advice in 2 to 3 friendly sentences.\n"
+    "- Level 3: Offer deep empathy, active listening, and gentle coping steps.\n"
+    "- Level 4 (Critical Emergency): Urgently and warmly guide the user to immediate safety. Suggest reaching out to surrounding doctors/hospitals, emergency numbers (108 / 112), and India's Tele-MANAS helpline (14416 / 1800-891-4416) right away.\n\n"
+    "DO NOT quote or copy-paste the user's exact sentence. Speak naturally like a caring friend."
 )
 
 def get_installed_ollama_models() -> List[str]:
@@ -77,7 +84,7 @@ def health_check():
 
     return {
         "status": "operational",
-        "engine": "Gemma Mental Health Companion (Ollama Mac)",
+        "engine": "Gemma Level-Based Mental Health AI (Ollama Mac)",
         "ollama_online": ollama_online,
         "available_models": installed,
         "active_model": default_model
@@ -91,7 +98,7 @@ def chat_handler(req: ChatRequest):
     installed_models = get_installed_ollama_models()
     model_to_use = resolve_best_model_name(req.model or "gemma4:latest", installed_models)
 
-    # Forward to local Ollama on Mac with thoughtful non-repetitive instruction
+    # Forward to local Ollama on Mac with Level-Based System Instruction
     try:
         formatted_messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION}
@@ -102,7 +109,7 @@ def chat_handler(req: ChatRequest):
             "messages": formatted_messages,
             "stream": False,
             "options": {
-                "num_predict": 250,
+                "num_predict": 300,
                 "temperature": 0.7
             }
         }).encode('utf-8')
@@ -126,19 +133,33 @@ def chat_handler(req: ChatRequest):
     except Exception as e:
         print(f"Ollama execution notice: {e}")
 
-    # Non-repetitive intelligent fallback
+    # Level-based fallback
     last_user_msg = (req.messages[-1].content or "").lower()
-    if any(k in last_user_msg for k in ["anxious", "stress", "exam", "panic", "fear"]):
-        fallback_reply = "It is completely normal to feel anxious under pressure. Take a slow, deep breath, break your task into small steps, and remember that you are capable of getting through this."
-    elif any(k in last_user_msg for k in ["sad", "depressed", "lonely", "alone", "hurt"]):
-        fallback_reply = "I hear you, and your feelings are completely valid. You do not have to carry this heavy weight alone—I am right here with you. What is on your mind?"
+    if any(k in last_user_msg for k in ["suicide", "end my life", "die", "marna", "mar jau", "kill myself"]):
+        fallback_reply = (
+            "[Level 4: Critical Emergency]\n"
+            "I can hear how deeply exhausted and hurt you are feeling, but please know your life is irreplaceable. "
+            "Please connect immediately with Tele-MANAS Helpline at 14416 (or 1800-891-4416) or call emergency medical assistance (108 / 112) for surrounding doctors and immediate support right now. "
+            "Please stay safe—we care about you."
+        )
+    elif any(k in last_user_msg for k in ["panic", "anxious", "fear", "heart", "darr"]):
+        fallback_reply = (
+            "[Level 2: Moderate Anxiety]\n"
+            "Take a slow breath in... and blow it out gently. "
+            "What you are experiencing right now is panic, but you are safe and this feeling will pass soon. "
+            "Try drinking a small glass of water and resting comfortably."
+        )
     else:
-        fallback_reply = "I am listening closely. Take your time, and tell me a bit more about how you are feeling so I can support you best."
+        fallback_reply = (
+            "[Level 1: Mild Stress]\n"
+            "I hear you, and it is completely normal to feel stressed when facing daily pressures. "
+            "Take one small step at a time, take a short break, and remember that you are capable of handling this."
+        )
 
     return {
         "reply": fallback_reply,
         "model": model_to_use,
-        "engine": "Gemma Mental Health Companion"
+        "engine": "Gemma Level-Based Companion"
     }
 
 if __name__ == "__main__":

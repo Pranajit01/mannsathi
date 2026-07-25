@@ -192,14 +192,14 @@ export default function Demo() {
             messages: [
               {
                 role: 'system',
-                content: 'You are a warm, empathetic, and intelligent mental health companion for the user. Carefully analyze and understand what the user is experiencing, feeling, or asking. Give a thoughtful, comforting, and direct response that answers their question or offers gentle advice in 2 to 4 clear sentences. DO NOT quote, repeat, or copy-paste the user\'s exact sentence back to them. Speak naturally like a supportive friend.',
+                content: 'You are Gemma 4, a warm, empathetic, and intelligent mental health companion for the user.\n\nSTEP 1: Carefully analyze the user\'s emotional state and state their level at the start of your response:\n• [Level 1: Mild Stress] (daily worries, mild pressure)\n• [Level 2: Moderate Anxiety] (panic, overwhelm, fear)\n• [Level 3: Severe Distress] (deep pain, exhaustion)\n• [Level 4: Critical Emergency] (crisis, self-harm thoughts, emergency)\n\nSTEP 2: Treat the user according to their level:\n- Level 1 & 2: Provide simple, comforting guidance and gentle grounding advice in 2 to 3 friendly sentences.\n- Level 3: Offer deep empathy, active listening, and gentle coping steps.\n- Level 4 (Critical Emergency): Urgently and warmly guide the user to immediate safety. Suggest reaching out to surrounding doctors/hospitals, emergency numbers (108 / 112), and India\'s Tele-MANAS helpline (14416 / 1800-891-4416) right away.\n\nDO NOT quote or copy-paste the user\'s exact sentence. Speak naturally like a caring friend.',
               },
               ...historyForOllama,
               { role: 'user', content: text },
             ],
             stream: false,
             options: {
-              num_predict: 250,
+              num_predict: 300,
               temperature: 0.7,
             },
           }),
@@ -249,15 +249,15 @@ export default function Demo() {
     // 3. Friendly Human Embedded Fallback
     if (!replyContent) {
       if (detectedRisk === 4) {
-        replyContent = "I can hear how deeply hurt and exhausted you're feeling right now, and I want you to know that your life matters so much. Please don't face this heavy pain alone. I'm right here with you. Please take a deep breath and sit comfortably in a safe room. I want you to connect right now with Tele-MANAS—they are India's free, 24/7 confidential helpline at 14416 or 1800-891-4416, or NIMHANS at 080-26995000. Will you reach out to them with me?";
+        replyContent = "[Level 4: Critical Emergency]\nI can hear how deeply hurt and exhausted you're feeling right now, and I want you to know that your life matters so much. Please don't face this heavy pain alone. Please connect right now with Tele-MANAS helpline at 14416 (or 1800-891-4416) or call surrounding emergency doctors/ambulance at 108 / 112 immediately. We care about you deeply.";
       } else if (detectedRisk === 2) {
-        replyContent = "I'm right here with you. Take a gentle breath in through your nose... hold it for a moment... and blow it out slowly through your mouth. What you're feeling right now is your body's natural reaction to stress, and even though it feels scary, you are safe and this panic will pass soon. Try taking a slow sip of cool water, un-clench your jaw, and let your shoulders drop. Would you like us to do a slow 4-count breathing exercise together right now?";
+        replyContent = "[Level 2: Moderate Anxiety]\nI'm right here with you. Take a gentle breath in through your nose... hold it for a moment... and blow it out slowly through your mouth. What you're feeling right now is panic, but you are safe and this feeling will pass soon. Try taking a slow sip of cool water and resting comfortably.";
       } else if (detectedRisk === 1) {
-        replyContent = "Hey, I hear you. Exam and career pressure can feel so heavy, especially when you want to do well and meet everyone's expectations. It's completely normal to feel overwhelmed right now. Please remember to take a pause and give yourself grace—you don't have to tackle everything all at once. Try taking a quick 10-minute break away from your books, get some fresh air or a glass of water, and then take things just one small topic at a time. An exam tests memory for one day; it never defines how capable or wonderful you are. I'm right here with you. What's the main topic stressing you out today?";
+        replyContent = "[Level 1: Mild Stress]\nHey, I hear you. Exam and career pressure can feel heavy, but remember to take a pause and give yourself grace. Try taking a quick 10-minute break away from your books, get some fresh air or a glass of water, and then take things just one small topic at a time.";
       } else if (detectedRisk === 3) {
-        replyContent = "Here are India's free, 24/7 confidential mental health helplines you can call anytime:\n\n• Tele-MANAS (Govt. Helpline): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• KIRAN Helpline: 1800-599-0019\n• Vandrevala Support: +91 9999 666 555\n\nThey are completely free, private, and available at any hour. Please feel free to reach out to them!";
+        replyContent = "[Level 3: Severe Distress]\nHere are India's free, 24/7 confidential mental health helplines you can call anytime:\n\n• Tele-MANAS (Govt. Helpline): 14416 or 1800-891-4416\n• NIMHANS Helpline: 080-26995000\n• Surrounding Doctors / Emergency: 108 / 112\n\nThey are completely free, private, and available at any hour. Please feel free to reach out to them!";
       } else {
-        replyContent = "Thank you for sharing that with me. Caring for your mind and feelings is so important, and you're taking a great step by talking it out. Take a deep breath, and know that you are not alone. How can I best support you right now?";
+        replyContent = "[Level 1: Mild Stress]\nThank you for sharing that with me. Caring for your mind and feelings is so important, and you're taking a great step by talking it out. Take a deep breath, and know that you are not alone. How can I best support you right now?";
       }
     }
 
@@ -413,7 +413,7 @@ export default function Demo() {
                       {
                         id: 'welcome-' + Date.now(),
                         role: 'assistant',
-                        content: 'Hello! I am Gemma 4, your mental health companion running locally via Ollama on your Mac.\n\nI am right here with you to listen, support you warmly, and help you work through whatever you are experiencing. How are you feeling today?',
+                        content: 'Hello! I am Gemma 4, your mental health companion running locally via Ollama on your Mac.\n\nI am right here with you to listen, evaluate your level of stress, and support you warmly. How are you feeling today?',
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         riskLevel: 0,
                       },
@@ -447,22 +447,39 @@ export default function Demo() {
                     {msg.content}
                   </div>
 
-                  {/* Crisis / Emergency Banner Trigger */}
-                  {msg.riskLevel !== undefined && msg.riskLevel >= 3 && (
-                    <div className="w-full max-w-[88%] sm:max-w-[80%] mt-3 p-4 rounded-2xl bg-red-950/60 border border-red-500/40 text-red-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg animate-pulse">
+                  {/* Level 4 Critical Emergency Banner Trigger */}
+                  {(msg.riskLevel === 4 || msg.content.includes('Level 4') || msg.content.includes('Tele-MANAS')) && (
+                    <div className="w-full max-w-[88%] sm:max-w-[80%] mt-3 p-4 rounded-2xl bg-red-950/80 border border-red-500/60 text-red-200 flex flex-col gap-3 shadow-xl animate-pulse">
                       <div className="flex items-center gap-2">
                         <PhoneCall className="w-5 h-5 text-red-400 shrink-0" />
                         <div>
-                          <div className="font-bold text-xs uppercase tracking-wider text-red-300">Free 24/7 Helpline Active</div>
-                          <div className="text-xs text-neutral-300">Tele-MANAS Toll-Free Emergency Helpline</div>
+                          <div className="font-extrabold text-xs uppercase tracking-wider text-red-300">Level 4: Critical Emergency Support</div>
+                          <div className="text-xs text-neutral-200 mt-0.5">Tele-MANAS Helpline & Surrounding Emergency Medical Services</div>
                         </div>
                       </div>
-                      <a
-                        href="tel:14416"
-                        className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shrink-0"
-                      >
-                        Dial 14416 Now
-                      </a>
+                      
+                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-red-500/30">
+                        <a
+                          href="tel:14416"
+                          className="px-3.5 py-1.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shrink-0 flex items-center gap-1.5"
+                        >
+                          <PhoneCall className="w-3.5 h-3.5" />
+                          <span>Tele-MANAS: 14416</span>
+                        </a>
+                        <a
+                          href="tel:18008914416"
+                          className="px-3.5 py-1.5 rounded-xl bg-red-900/80 hover:bg-red-800 text-white font-bold text-xs uppercase tracking-wider border border-red-500/40 shrink-0"
+                        >
+                          Toll-Free: 1800-891-4416
+                        </a>
+                        <a
+                          href="tel:108"
+                          className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider shadow-md shrink-0 flex items-center gap-1.5"
+                        >
+                          <PhoneCall className="w-3.5 h-3.5" />
+                          <span>Doctor/Ambulance: 108</span>
+                        </a>
+                      </div>
                     </div>
                   )}
 
